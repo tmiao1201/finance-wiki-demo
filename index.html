@@ -1,0 +1,1688 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Acme 财务知识库 · 团队第二大脑</title>
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- 字体 -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap">
+
+<!-- Markdown 渲染 -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<!-- ECharts 仪表盘 -->
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+
+<!-- 数据 + 接入桩 -->
+<script src="data.js"></script>
+<script src="integrations.js"></script>
+
+<!-- Alpine.js（必须 defer，且在 mockData 之后） -->
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js"></script>
+
+<style>
+  html { font-family: 'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif; }
+  body { background: #f7f8fa; color: #1f2329; }
+  /* 飞书风格滚动条 */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+  /* Markdown 渲染样式 */
+  .prose-doc h1 { font-size: 1.875rem; font-weight: 700; margin: 1.5rem 0 1rem; color: #1f2329; }
+  .prose-doc h2 { font-size: 1.375rem; font-weight: 600; margin: 1.5rem 0 0.75rem; color: #1f2329; border-bottom: 1px solid #e5e6eb; padding-bottom: 0.5rem; }
+  .prose-doc h3 { font-size: 1.125rem; font-weight: 600; margin: 1.25rem 0 0.5rem; color: #1f2329; }
+  .prose-doc p { margin: 0.75rem 0; line-height: 1.75; color: #4e5969; }
+  .prose-doc ul, .prose-doc ol { margin: 0.75rem 0; padding-left: 1.5rem; line-height: 1.75; color: #4e5969; }
+  .prose-doc li { margin: 0.25rem 0; }
+  .prose-doc strong { color: #1f2329; font-weight: 600; }
+  .prose-doc table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.875rem; }
+  .prose-doc th, .prose-doc td { border: 1px solid #e5e6eb; padding: 0.5rem 0.75rem; text-align: left; }
+  .prose-doc th { background: #f7f8fa; font-weight: 600; color: #1f2329; }
+  .prose-doc code { background: #f2f3f5; padding: 0.125rem 0.375rem; border-radius: 4px; font-size: 0.875em; color: #d63384; }
+  .prose-doc pre { background: #1f2329; color: #f5f5f5; padding: 1rem; border-radius: 6px; overflow-x: auto; margin: 1rem 0; }
+  .prose-doc pre code { background: transparent; color: inherit; padding: 0; }
+  .prose-doc blockquote { border-left: 3px solid #3370ff; padding: 0.5rem 1rem; background: #f0f7ff; color: #4e5969; margin: 1rem 0; }
+  /* 闪烁动画 */
+  @keyframes pulse-blue { 0%, 100% { box-shadow: 0 0 0 0 rgba(51, 112, 255, 0.4); } 50% { box-shadow: 0 0 0 8px rgba(51, 112, 255, 0); } }
+  .pulse-blue { animation: pulse-blue 1.5s infinite; }
+  [x-cloak] { display: none !important; }
+</style>
+</head>
+
+<body x-cloak x-data="app()" x-init="init()" class="overflow-hidden">
+
+<!-- ========== 顶部导航栏 ========== -->
+<header class="h-14 bg-white border-b border-gray-200 flex items-center px-4 gap-4 z-30 relative">
+  <!-- Logo -->
+  <div class="flex items-center gap-2">
+    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white font-bold">A</div>
+    <span class="font-semibold text-gray-800">Acme 财务知识库</span>
+    <span class="text-xs text-gray-400 px-2 py-0.5 bg-gray-100 rounded">Demo</span>
+  </div>
+
+  <!-- 全局搜索 -->
+  <div class="flex-1 max-w-2xl mx-auto relative">
+    <div class="relative">
+      <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/></svg>
+      <input
+        type="text"
+        x-model="searchQuery"
+        @focus="searchFocus = true"
+        @blur="setTimeout(() => searchFocus = false, 200)"
+        placeholder="搜索文档、Skills、报告… (支持语义搜索)"
+        class="w-full bg-gray-50 border border-transparent focus:bg-white focus:border-blue-400 outline-none rounded-lg pl-10 pr-4 py-2 text-sm transition" />
+    </div>
+    <!-- 搜索下拉 -->
+    <div x-show="searchFocus && searchQuery.length > 0" x-transition
+         class="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-2 max-h-96 overflow-auto">
+      <div class="px-3 py-1 text-xs text-gray-400">语义搜索结果（mock）</div>
+      <template x-for="r in searchResults" :key="r.id">
+        <div @click="goToDoc(r.moduleId, r.id); searchQuery=''"
+             class="px-3 py-2 hover:bg-blue-50 cursor-pointer">
+          <div class="text-sm text-gray-800" x-text="r.title"></div>
+          <div class="text-xs text-gray-400 mt-0.5" x-text="r.snippet"></div>
+        </div>
+      </template>
+      <div x-show="searchResults.length === 0" class="px-3 py-2 text-sm text-gray-400">无匹配结果，试试问 AI 助手 →</div>
+    </div>
+  </div>
+
+  <!-- 用户区 -->
+  <div class="flex items-center gap-3 text-sm">
+    <!-- 知识图谱入口 -->
+    <button @click="openGraph()"
+            class="px-3 py-1.5 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg text-sm font-medium transition flex items-center gap-1 shadow-sm"
+            title="知识图谱 — Obsidian 风格力导向图">
+      <span>🕸</span>
+      <span>图谱</span>
+    </button>
+    <!-- 团队贡献入口 -->
+    <button @click="openContribute()"
+            class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition flex items-center gap-1 shadow-sm"
+            title="新建文档 / 上传文件 / 贡献到知识库">
+      <span class="text-base leading-none">＋</span>
+      <span>贡献</span>
+    </button>
+    <button class="text-gray-500 hover:text-gray-800" title="通知">🔔</button>
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-pink-500 flex items-center justify-center text-white font-medium text-xs">财</div>
+      <span class="text-gray-700">财务 Leader</span>
+    </div>
+  </div>
+</header>
+
+<!-- ========== 主体三栏 ========== -->
+<div class="flex" style="height: calc(100vh - 3.5rem);">
+
+  <!-- ========== 左栏：模块树 ========== -->
+  <aside class="w-72 bg-white border-r border-gray-200 overflow-y-auto py-3">
+    <div class="px-4 mb-2 text-xs text-gray-400 uppercase tracking-wide">知识库目录</div>
+    <template x-for="m in modules" :key="m.id">
+      <div>
+        <!-- 模块行 -->
+        <div @click="selectModule(m.id)"
+             class="mx-2 px-3 py-2 rounded-lg flex items-center gap-2 cursor-pointer transition"
+             :class="currentModuleId === m.id ? 'bg-blue-50 text-blue-700' : 'hover:bg-gray-50 text-gray-700'">
+          <span class="text-base" x-text="m.icon"></span>
+          <span class="text-xs text-gray-400 font-mono" x-text="m.num"></span>
+          <span class="text-sm font-medium flex-1" x-text="m.name"></span>
+          <span x-show="m.highlight" class="text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded">高光</span>
+        </div>
+        <!-- 子文档 -->
+        <div x-show="currentModuleId === m.id && moduleDocs[m.id]" class="ml-10 mt-1 mb-2 space-y-0.5">
+          <template x-for="d in (moduleDocs[m.id] || [])" :key="d.id">
+            <div @click.stop="selectDoc(d.id)"
+                 class="px-2 py-1 rounded text-xs cursor-pointer transition"
+                 :class="currentDocId === d.id ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-gray-50'"
+                 x-text="d.title"></div>
+          </template>
+        </div>
+      </div>
+    </template>
+    <!-- 演进路线提示 -->
+    <div class="mx-4 mt-6 p-3 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg text-xs text-gray-600 border border-blue-100">
+      <div class="font-semibold text-blue-700 mb-1">📍 演进路线</div>
+      <div>M1 骨架 → M2 RAG → M3 自动报告 → M4 Skills → M5 自建 Web</div>
+      <div class="mt-1 text-gray-400">见 ARCHITECTURE.md</div>
+    </div>
+  </aside>
+
+  <!-- ========== 中栏：内容区 ========== -->
+  <main class="flex-1 overflow-y-auto">
+
+    <!-- ----- 首屏 Home ----- -->
+    <template x-if="currentModuleId === 'home'">
+      <div class="max-w-5xl mx-auto px-8 py-8">
+        <div class="text-xs text-blue-600 mb-2">🏠 团队主页</div>
+        <h1 class="text-3xl font-bold text-gray-800 mb-2" x-text="team.name + ' · 团队第二大脑'"></h1>
+        <p class="text-gray-600 mb-1" x-text="'团队规模 ' + team.members + ' 人 · ' + team.stage"></p>
+        <p class="text-gray-500 leading-relaxed mb-8 max-w-3xl" x-text="team.welcome"></p>
+
+        <!-- 当周关注 -->
+        <div class="mb-8">
+          <h3 class="text-sm font-semibold text-gray-700 mb-3">⚡ 当周关注</h3>
+          <div class="grid grid-cols-3 gap-4">
+            <template x-for="f in team.weekFocus" :key="f.text">
+              <div class="bg-white rounded-lg p-4 border border-gray-200">
+                <div class="text-xs text-blue-600 font-semibold mb-2" x-text="'# ' + f.tag"></div>
+                <div class="text-sm text-gray-700 leading-relaxed" x-text="f.text"></div>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <!-- OKR -->
+        <div class="mb-8">
+          <h3 class="text-sm font-semibold text-gray-700 mb-3">🎯 本季度 OKR</h3>
+          <div class="bg-white rounded-lg border border-gray-200 divide-y divide-gray-100">
+            <template x-for="o in team.okr" :key="o.kr">
+              <div class="px-4 py-3 flex items-start gap-3">
+                <div class="px-2 py-0.5 bg-purple-100 text-purple-700 rounded text-xs font-mono shrink-0" x-text="o.kr"></div>
+                <div class="text-sm text-gray-700" x-text="o.text"></div>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <!-- 高光模块快捷入口 -->
+        <div>
+          <h3 class="text-sm font-semibold text-gray-700 mb-3">🌟 重点模块</h3>
+          <div class="grid grid-cols-2 gap-4">
+            <template x-for="m in modules.filter(x => x.highlight && x.id !== 'home')" :key="m.id">
+              <div @click="selectModule(m.id)"
+                   class="bg-white rounded-lg p-5 border border-gray-200 hover:border-blue-400 hover:shadow-md cursor-pointer transition group">
+                <div class="flex items-center gap-3 mb-2">
+                  <span class="text-2xl" x-text="m.icon"></span>
+                  <span class="font-semibold text-gray-800 group-hover:text-blue-700" x-text="m.name"></span>
+                </div>
+                <div class="text-sm text-gray-500" x-text="m.desc"></div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- ----- 文档浏览（operations / knowledge / templates / projects） ----- -->
+    <template x-if="['operations','knowledge','templates','projects'].includes(currentModuleId)">
+      <div class="max-w-4xl mx-auto px-8 py-8">
+        <!-- 模块头 -->
+        <template x-if="!currentDocId">
+          <div>
+            <div class="text-xs text-blue-600 mb-2" x-text="getModule(currentModuleId).num + ' · ' + getModule(currentModuleId).name"></div>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2" x-text="getModule(currentModuleId).name"></h1>
+            <p class="text-gray-500 mb-6" x-text="getModule(currentModuleId).desc"></p>
+            <div class="space-y-2">
+              <template x-for="d in (moduleDocs[currentModuleId] || [])" :key="d.id">
+                <div @click="selectDoc(d.id)"
+                     class="bg-white p-4 rounded-lg border border-gray-200 hover:border-blue-400 cursor-pointer transition flex items-center gap-3">
+                  <span class="text-xl">📄</span>
+                  <div class="flex-1">
+                    <div class="font-medium text-gray-800" x-text="d.title"></div>
+                    <div class="text-xs text-gray-400 mt-0.5" x-text="docs[d.id]?.meta?.tags?.join(' · ')"></div>
+                  </div>
+                  <span class="text-xs text-gray-400" x-text="docs[d.id]?.meta?.updated"></span>
+                </div>
+              </template>
+              <!-- 团队成员贡献入口（卡片式） -->
+              <div @click="openContributeForModule(currentModuleId)"
+                   class="p-4 rounded-lg border-2 border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50 cursor-pointer transition flex items-center justify-center gap-2 text-gray-500 hover:text-blue-700">
+                <span class="text-lg">＋</span>
+                <span class="text-sm">新建文档（贡献到本模块）</span>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <!-- 文档详情 -->
+        <template x-if="currentDocId && docs[currentDocId]">
+          <article>
+            <!-- frontmatter 元信息 -->
+            <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6 text-sm">
+              <div class="text-xs text-blue-600 mb-2 font-semibold">📋 文档元信息（Karpathy LLM Wiki frontmatter）</div>
+              <div class="grid grid-cols-4 gap-2 text-xs text-gray-600">
+                <div><span class="text-gray-400">作者：</span><span x-text="docs[currentDocId].meta.owner"></span></div>
+                <div><span class="text-gray-400">更新：</span><span x-text="docs[currentDocId].meta.updated"></span></div>
+                <div><span class="text-gray-400">版本：</span><span x-text="'v' + docs[currentDocId].meta.version"></span></div>
+                <div><span class="text-gray-400">标签：</span><span x-text="docs[currentDocId].meta.tags.join('、')"></span></div>
+              </div>
+            </div>
+
+            <div class="flex items-start justify-between mb-6 gap-4">
+              <h1 class="text-3xl font-bold text-gray-800 flex-1" x-text="docs[currentDocId].meta.title"></h1>
+              <div class="flex gap-2 shrink-0">
+                <button @click="editCurrentDoc()"
+                        class="px-3 py-1.5 bg-white border border-gray-200 hover:border-blue-400 hover:text-blue-700 rounded-lg text-xs font-medium transition flex items-center gap-1">
+                  <span>✏️</span> 编辑
+                </button>
+                <button @click="showToast('版本历史：v' + docs[currentDocId].meta.version + ' 当前；v' + (parseFloat(docs[currentDocId].meta.version) - 0.1).toFixed(1) + ' 等历史版本将在弹层展示（mock）')"
+                        class="px-3 py-1.5 bg-white border border-gray-200 hover:border-blue-400 hover:text-blue-700 rounded-lg text-xs font-medium transition flex items-center gap-1">
+                  <span>🕓</span> 历史
+                </button>
+              </div>
+            </div>
+
+            <!-- markdown 内容 -->
+            <div class="prose-doc" x-html="renderMd(docs[currentDocId].body)"></div>
+
+            <!-- 反向链接 -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+              <div class="text-xs text-gray-400 mb-2">🔗 关联文档</div>
+              <div class="flex flex-wrap gap-2">
+                <template x-for="rid in (docs[currentDocId].meta.related || [])" :key="rid">
+                  <button @click="selectDoc(rid)"
+                          class="text-xs px-3 py-1 bg-gray-100 hover:bg-blue-100 hover:text-blue-700 rounded-full transition"
+                          x-text="docs[rid]?.meta?.title || rid"></button>
+                </template>
+              </div>
+            </div>
+          </article>
+        </template>
+      </div>
+    </template>
+
+    <!-- ----- 数据中心 ----- -->
+    <template x-if="currentModuleId === 'datahub'">
+      <div class="max-w-5xl mx-auto px-8 py-8">
+        <div class="text-xs text-blue-600 mb-2">📊 05 · 数据中心</div>
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">关键指标总览</h1>
+        <p class="text-gray-500 mb-6">数据来自 ERP / 银行 / 多维表格，每小时刷新一次。月报、AI 助手都基于此数据回答。</p>
+
+        <div class="grid grid-cols-4 gap-4 mb-8">
+          <template x-for="k in kpis.cards" :key="k.label">
+            <div class="bg-white rounded-lg p-4 border border-gray-200">
+              <div class="text-xs text-gray-400 mb-1" x-text="k.label"></div>
+              <div class="text-2xl font-bold text-gray-800 mb-1" x-text="k.value"></div>
+              <div class="text-xs"
+                   :class="k.changeType === 'up' ? 'text-green-600' : k.changeType === 'down' ? 'text-blue-600' : 'text-amber-600'"
+                   x-text="k.change"></div>
+            </div>
+          </template>
+        </div>
+
+        <div class="bg-white rounded-lg border border-gray-200 p-4">
+          <div class="text-sm font-semibold text-gray-700 mb-2">收入趋势：实际 vs 预算（近 6 个月，单位 ¥M）</div>
+          <div id="revenue-chart" style="height: 320px;"></div>
+        </div>
+
+        <div class="mt-6 text-xs text-gray-400 italic">
+          💡 接入扩展性：当前数据为 mock，生产环境通过 <code class="text-gray-600">DataSources.fetchKPIs()</code> 拉取（详见 integrations.js）
+        </div>
+      </div>
+    </template>
+
+    <!-- ----- 报告中心（高光交互） ----- -->
+    <template x-if="currentModuleId === 'reports'">
+      <div class="max-w-4xl mx-auto px-8 py-8">
+        <div class="text-xs text-blue-600 mb-2">📈 06 · 报告中心</div>
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">报告中心</h1>
+        <p class="text-gray-500 mb-6">定时任务从数据中心拉数据 → LLM 套模板生成 → 财务复核 → 推送飞书。把 leader 周末写报告的时间从 8 小时压到 1 小时。</p>
+
+        <!-- 月报生成器 -->
+        <div class="bg-gradient-to-br from-blue-50 to-purple-50 border border-blue-200 rounded-xl p-6 mb-6">
+          <div class="flex items-start justify-between mb-4">
+            <div>
+              <div class="text-xs text-blue-700 font-semibold mb-1">🌟 高光交互</div>
+              <h3 class="text-xl font-bold text-gray-800">2026 年 4 月经营月报</h3>
+              <p class="text-sm text-gray-500 mt-1">基于 Data Hub 实时数据 + LLM 经营分析</p>
+            </div>
+            <button @click="generateReport()"
+                    :disabled="reportGenerating"
+                    class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-sm transition disabled:opacity-50 disabled:cursor-not-allowed pulse-blue">
+              <span x-show="!reportGenerating">⚡ 一键生成月报</span>
+              <span x-show="reportGenerating" x-text="reportProgressLabel"></span>
+            </button>
+          </div>
+
+          <!-- 进度条 -->
+          <div x-show="reportGenerating" class="mt-4">
+            <div class="h-2 bg-blue-100 rounded-full overflow-hidden">
+              <div class="h-full bg-blue-600 transition-all duration-300" :style="'width: ' + reportProgress + '%'"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 报告输出区 -->
+        <template x-if="reportData">
+          <div class="bg-white rounded-xl border border-gray-200 p-8">
+            <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
+              <div>
+                <h2 class="text-2xl font-bold text-gray-800" x-text="reportData.title"></h2>
+                <div class="text-xs text-gray-400 mt-1" x-text="'生成时间：' + reportData.generatedAt + ' · 由 monthly-report skill 自动生成'"></div>
+              </div>
+              <button @click="pushToFeishu()"
+                      class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition flex items-center gap-2">
+                <span>💬</span> 推送到飞书
+              </button>
+            </div>
+
+            <div class="bg-blue-50 rounded-lg p-4 mb-6 border-l-4 border-blue-500">
+              <div class="text-xs text-blue-700 font-semibold mb-1">摘要</div>
+              <div class="text-sm text-gray-700 leading-relaxed" x-text="reportData.summary"></div>
+            </div>
+
+            <!-- KPI 表格 -->
+            <h3 class="text-lg font-semibold text-gray-800 mb-3">📊 核心 KPI</h3>
+            <table class="w-full mb-6 text-sm">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="border border-gray-200 px-3 py-2 text-left">指标</th>
+                  <th class="border border-gray-200 px-3 py-2 text-left">当月值</th>
+                  <th class="border border-gray-200 px-3 py-2 text-left">环比</th>
+                  <th class="border border-gray-200 px-3 py-2 text-left">同比</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template x-for="k in reportData.kpis" :key="k.name">
+                  <tr>
+                    <td class="border border-gray-200 px-3 py-2 font-medium" x-text="k.name"></td>
+                    <td class="border border-gray-200 px-3 py-2 font-mono" x-text="k.v"></td>
+                    <td class="border border-gray-200 px-3 py-2" x-text="k.mom"></td>
+                    <td class="border border-gray-200 px-3 py-2" x-text="k.yoy"></td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+
+            <!-- 各章节 -->
+            <template x-for="s in reportData.sections" :key="s.title">
+              <div class="mb-5">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2" x-text="s.title"></h3>
+                <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line" x-text="s.body"></p>
+              </div>
+            </template>
+          </div>
+        </template>
+
+        <!-- 历史报告 -->
+        <div x-show="!reportData" class="mt-6">
+          <h3 class="text-sm font-semibold text-gray-700 mb-3">📚 历史报告</h3>
+          <div class="bg-white rounded-lg border border-gray-200 divide-y divide-gray-100">
+            <template x-for="r in archiveReports" :key="r.title">
+              <div class="px-4 py-3 flex items-center gap-3 hover:bg-gray-50 cursor-pointer">
+                <span>📄</span>
+                <div class="flex-1">
+                  <div class="text-sm font-medium text-gray-800" x-text="r.title"></div>
+                  <div class="text-xs text-gray-400" x-text="r.date + ' · ' + r.author"></div>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- ----- Skills 工坊（高光交互） ----- -->
+    <template x-if="currentModuleId === 'skills'">
+      <div class="max-w-5xl mx-auto px-8 py-8">
+        <div class="flex items-start justify-between mb-6">
+          <div>
+            <div class="text-xs text-blue-600 mb-2">🛠️ 07 · Skills 工坊</div>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">团队共享能力空间</h1>
+            <p class="text-gray-500 max-w-2xl">每个人解决过一次的问题，沉淀成可复用 skill，全团队调用。参考 Anthropic Skills + superpowers 模式。</p>
+          </div>
+          <button @click="showDraftSkill = true"
+                  class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition flex items-center gap-2 shrink-0">
+            <span>✨</span> 在线生成 Skill
+          </button>
+        </div>
+
+        <!-- skill 网格 -->
+        <div class="grid grid-cols-2 gap-4">
+          <template x-for="s in skills" :key="s.id">
+            <div @click="selectedSkill = s"
+                 class="bg-white rounded-lg p-5 border border-gray-200 hover:border-blue-400 hover:shadow cursor-pointer transition">
+              <div class="flex items-start justify-between mb-2">
+                <div>
+                  <div class="font-semibold text-gray-800" x-text="s.title"></div>
+                  <div class="text-xs text-gray-400 font-mono mt-0.5" x-text="s.name"></div>
+                </div>
+                <span class="text-[10px] px-2 py-0.5 rounded-full"
+                      :class="s.status === 'stable' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'"
+                      x-text="s.status"></span>
+              </div>
+              <p class="text-sm text-gray-600 mb-3 leading-relaxed" x-text="s.desc"></p>
+              <div class="flex items-center justify-between text-xs text-gray-400">
+                <span>👤 <span x-text="s.contributor"></span> · 📁 <span x-text="s.domain"></span></span>
+                <span>📞 <span x-text="s.calls"></span> 次调用</span>
+              </div>
+            </div>
+          </template>
+        </div>
+
+        <!-- 贡献流程图 -->
+        <div class="mt-8 bg-white rounded-lg border border-gray-200 p-5">
+          <h3 class="text-sm font-semibold text-gray-700 mb-3">🔄 贡献流程</h3>
+          <div class="flex items-center justify-between text-sm">
+            <div class="text-center flex-1"><div class="w-10 h-10 mx-auto bg-blue-50 text-blue-700 rounded-full flex items-center justify-center font-bold mb-1">1</div>提案</div>
+            <div class="text-gray-300">→</div>
+            <div class="text-center flex-1"><div class="w-10 h-10 mx-auto bg-blue-50 text-blue-700 rounded-full flex items-center justify-center font-bold mb-1">2</div>起草</div>
+            <div class="text-gray-300">→</div>
+            <div class="text-center flex-1"><div class="w-10 h-10 mx-auto bg-blue-50 text-blue-700 rounded-full flex items-center justify-center font-bold mb-1">3</div>评审</div>
+            <div class="text-gray-300">→</div>
+            <div class="text-center flex-1"><div class="w-10 h-10 mx-auto bg-blue-50 text-blue-700 rounded-full flex items-center justify-center font-bold mb-1">4</div>上线</div>
+            <div class="text-gray-300">→</div>
+            <div class="text-center flex-1"><div class="w-10 h-10 mx-auto bg-blue-50 text-blue-700 rounded-full flex items-center justify-center font-bold mb-1">5</div>统计</div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+  </main>
+
+  <!-- ========== 右栏：AI 助手 ========== -->
+  <aside class="w-96 bg-white border-l border-gray-200 flex flex-col">
+    <div class="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
+      <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center text-white text-xs">🤖</div>
+      <div class="flex-1">
+        <div class="text-sm font-semibold text-gray-800">财务 AI 助手</div>
+        <div class="text-[10px] text-gray-400">基于知识库 RAG · Claude Opus 4.7</div>
+      </div>
+      <button @click="chatHistory = []" class="text-xs text-gray-400 hover:text-gray-700">清空</button>
+    </div>
+
+    <!-- 对话区 -->
+    <div class="flex-1 overflow-y-auto p-4 space-y-4" x-ref="chatBox">
+      <!-- 欢迎语 + 建议问题 -->
+      <template x-if="chatHistory.length === 0">
+        <div>
+          <div class="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-3 text-sm text-gray-700 leading-relaxed">
+            👋 我已学习了知识库里所有文档。<br>
+            可以问我流程、税务、政策、项目细节，回答会标注引用源。
+          </div>
+          <div class="mt-3">
+            <div class="text-xs text-gray-400 mb-2">💡 试试问：</div>
+            <div class="space-y-1.5">
+              <template x-for="q in qa.__suggested__" :key="q">
+                <button @click="askQuestion(q)"
+                        class="w-full text-left px-3 py-2 text-xs bg-gray-50 hover:bg-blue-50 hover:text-blue-700 rounded-md transition"
+                        x-text="q"></button>
+              </template>
+            </div>
+          </div>
+        </div>
+      </template>
+
+      <!-- 历史消息 -->
+      <template x-for="(msg, i) in chatHistory" :key="i">
+        <div>
+          <!-- 用户问 -->
+          <template x-if="msg.role === 'user'">
+            <div class="flex justify-end">
+              <div class="max-w-[85%] bg-blue-600 text-white rounded-lg rounded-tr-sm px-3 py-2 text-sm" x-text="msg.content"></div>
+            </div>
+          </template>
+          <!-- 助手答 -->
+          <template x-if="msg.role === 'assistant'">
+            <div class="flex justify-start">
+              <div class="max-w-[90%]">
+                <div class="bg-gray-50 rounded-lg rounded-tl-sm px-3 py-2 text-sm text-gray-700 prose-doc" x-html="renderMd(msg.content)"></div>
+                <!-- 引用源 -->
+                <div x-show="msg.citations && msg.citations.length > 0" class="mt-2 space-y-1">
+                  <div class="text-[10px] text-gray-400">📚 引用源：</div>
+                  <template x-for="c in msg.citations" :key="c.docId">
+                    <button @click="goToDoc(getModuleByDoc(c.docId), c.docId)"
+                            class="block w-full text-left text-[11px] px-2 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded transition">
+                      📄 <span x-text="c.title"></span> · <span x-text="c.section" class="text-blue-500"></span>
+                    </button>
+                  </template>
+                </div>
+                <!-- 双向流转：把对话保存为知识 -->
+                <button @click="saveDialogAsKnowledge(i)"
+                        class="mt-2 text-[10px] text-gray-400 hover:text-blue-600 flex items-center gap-1">
+                  <span>💾</span> 这条回答有价值 → 保存为知识库文档
+                </button>
+              </div>
+            </div>
+          </template>
+        </div>
+      </template>
+
+      <!-- loading -->
+      <div x-show="chatLoading" class="flex justify-start">
+        <div class="bg-gray-50 rounded-lg px-3 py-2 text-sm text-gray-400">
+          <span class="inline-block animate-pulse">●●●</span> 检索知识库 + 生成回答…
+        </div>
+      </div>
+    </div>
+
+    <!-- 输入区 -->
+    <div class="p-3 border-t border-gray-100">
+      <div class="relative">
+        <textarea
+          x-model="chatInput"
+          @keydown.enter.prevent="!chatLoading && chatInput.trim() && askQuestion(chatInput)"
+          rows="2"
+          placeholder="问任何业务、流程、税务问题…  (Enter 发送)"
+          class="w-full bg-gray-50 border border-gray-200 focus:border-blue-400 outline-none rounded-lg p-2 text-sm resize-none"></textarea>
+        <button @click="chatInput.trim() && askQuestion(chatInput)"
+                :disabled="chatLoading || !chatInput.trim()"
+                class="absolute bottom-2 right-2 px-3 py-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-30 text-white rounded text-xs font-medium transition">
+          发送
+        </button>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- ========== Skill 详情弹层 ========== -->
+<div x-show="selectedSkill" x-cloak
+     @click.self="selectedSkill = null"
+     x-transition.opacity
+     class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-8">
+  <div x-show="selectedSkill" x-transition class="bg-white rounded-xl max-w-3xl w-full max-h-[85vh] overflow-y-auto">
+    <template x-if="selectedSkill">
+      <div class="p-6">
+        <div class="flex items-start justify-between mb-4">
+          <div>
+            <div class="text-xs text-gray-400 font-mono" x-text="selectedSkill.name + '.skill'"></div>
+            <h2 class="text-2xl font-bold text-gray-800 mt-1" x-text="selectedSkill.title"></h2>
+            <div class="flex items-center gap-3 mt-2 text-xs text-gray-500">
+              <span>👤 <span x-text="selectedSkill.contributor"></span></span>
+              <span>📁 <span x-text="selectedSkill.domain"></span></span>
+              <span>📞 <span x-text="selectedSkill.calls"></span> 次调用</span>
+              <span class="px-2 py-0.5 bg-green-100 text-green-700 rounded-full" x-text="selectedSkill.status"></span>
+            </div>
+          </div>
+          <button @click="selectedSkill = null" class="text-gray-400 hover:text-gray-700 text-2xl leading-none">×</button>
+        </div>
+        <div class="bg-gray-900 text-gray-100 rounded-lg p-4 overflow-x-auto">
+          <pre class="text-xs leading-relaxed whitespace-pre-wrap font-mono"><code x-text="selectedSkill.content"></code></pre>
+        </div>
+        <div class="mt-4 flex gap-2">
+          <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition">▶ 试运行</button>
+          <button class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm transition">📝 提议修改</button>
+        </div>
+      </div>
+    </template>
+  </div>
+</div>
+
+<!-- ========== 在线生成 Skill 弹层 ========== -->
+<div x-show="showDraftSkill" x-cloak
+     @click.self="closeDraft()"
+     x-transition.opacity
+     class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-8">
+  <div x-show="showDraftSkill" x-transition class="bg-white rounded-xl max-w-2xl w-full max-h-[85vh] overflow-y-auto">
+    <div class="p-6">
+      <div class="flex items-start justify-between mb-1">
+        <h2 class="text-xl font-bold text-gray-800">✨ 在线生成 Skill</h2>
+        <button @click="closeDraft()" class="text-gray-400 hover:text-gray-700 text-2xl leading-none">×</button>
+      </div>
+      <p class="text-sm text-gray-500 mb-5">填写 4 个字段，LLM 帮你起草 SKILL.md 初稿，你可以再精修后提交评审。</p>
+
+      <template x-if="!draftResult">
+        <div class="space-y-4">
+          <div>
+            <label class="text-xs text-gray-600 mb-1 block">使用场景 <span class="text-red-500">*</span></label>
+            <input type="text" x-model="draftForm.scenario"
+                   placeholder="如：每月初自动给销售团队发上月回款排行榜"
+                   class="w-full bg-gray-50 border border-gray-200 focus:border-blue-400 outline-none rounded-lg p-2 text-sm">
+          </div>
+          <div>
+            <label class="text-xs text-gray-600 mb-1 block">输入</label>
+            <input type="text" x-model="draftForm.inputs"
+                   placeholder="如：上月销售订单、回款记录"
+                   class="w-full bg-gray-50 border border-gray-200 focus:border-blue-400 outline-none rounded-lg p-2 text-sm">
+          </div>
+          <div>
+            <label class="text-xs text-gray-600 mb-1 block">输出</label>
+            <input type="text" x-model="draftForm.outputs"
+                   placeholder="如：飞书富文本卡片，包含 Top10 销售排行"
+                   class="w-full bg-gray-50 border border-gray-200 focus:border-blue-400 outline-none rounded-lg p-2 text-sm">
+          </div>
+          <div>
+            <label class="text-xs text-gray-600 mb-1 block">触发条件</label>
+            <input type="text" x-model="draftForm.trigger"
+                   placeholder="如：每月 1 号 09:00 定时触发"
+                   class="w-full bg-gray-50 border border-gray-200 focus:border-blue-400 outline-none rounded-lg p-2 text-sm">
+          </div>
+          <button @click="draftSkillSubmit()"
+                  :disabled="!draftForm.scenario || draftLoading"
+                  class="w-full px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-lg font-medium text-sm transition">
+            <span x-show="!draftLoading">🤖 让 Claude 帮我起草</span>
+            <span x-show="draftLoading">起草中…</span>
+          </button>
+        </div>
+      </template>
+
+      <template x-if="draftResult">
+        <div>
+          <div class="text-xs text-green-700 mb-2">✓ 已生成草稿，下面是 SKILL.md：</div>
+          <div class="bg-gray-900 text-gray-100 rounded-lg p-4 overflow-x-auto">
+            <pre class="text-xs leading-relaxed whitespace-pre-wrap font-mono"><code x-text="draftResult"></code></pre>
+          </div>
+          <div class="flex gap-2 mt-4">
+            <button @click="submitForReview()" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition">📤 提交评审</button>
+            <button @click="draftResult = ''" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm transition">↻ 重新生成</button>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 团队贡献弹层（新建文档 / 上传文件） ========== -->
+<div x-show="showContribute" x-cloak
+     @click.self="closeContribute()"
+     x-transition.opacity
+     class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-6 overflow-y-auto">
+  <div x-show="showContribute" x-transition class="bg-white rounded-xl max-w-3xl w-full max-h-[92vh] overflow-y-auto my-auto">
+    <div class="p-6">
+      <!-- 标题 + 关闭 -->
+      <div class="flex items-start justify-between mb-2">
+        <div>
+          <h2 class="text-xl font-bold text-gray-800">＋ 团队贡献</h2>
+          <p class="text-sm text-gray-500 mt-1">每个团队成员都能写文档、上传文件、发起 Skill 提案。所有贡献经评审后入库，并由 LLM 自动建索引。</p>
+        </div>
+        <button @click="closeContribute()" class="text-gray-400 hover:text-gray-700 text-2xl leading-none">×</button>
+      </div>
+
+      <!-- Tab 切换 -->
+      <div class="flex gap-1 mt-4 mb-5 border-b border-gray-200">
+        <button @click="contributeTab = 'create'"
+                :class="contributeTab === 'create' ? 'text-blue-700 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-800'"
+                class="px-4 py-2 text-sm font-medium transition -mb-px">
+          ✍️ 新建文档
+        </button>
+        <button @click="contributeTab = 'upload'"
+                :class="contributeTab === 'upload' ? 'text-blue-700 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-800'"
+                class="px-4 py-2 text-sm font-medium transition -mb-px">
+          📎 上传文件（合同 / 报表 / 凭证）
+        </button>
+        <button @click="contributeTab = 'skill'"
+                :class="contributeTab === 'skill' ? 'text-blue-700 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-800'"
+                class="px-4 py-2 text-sm font-medium transition -mb-px">
+          🛠️ 提议 Skill
+        </button>
+      </div>
+
+      <!-- ======== Tab 1：新建文档 ======== -->
+      <template x-if="contributeTab === 'create'">
+        <div>
+          <!-- Step 1：选模板类型 -->
+          <template x-if="createStep === 1">
+            <div>
+              <div class="text-xs text-gray-500 mb-3">选一个文档类型，套用结构化模板（符合 Karpathy LLM Wiki 规范）</div>
+              <div class="grid grid-cols-2 gap-3">
+                <template x-for="t in createTypes" :key="t.id">
+                  <div @click="selectCreateType(t)"
+                       class="border border-gray-200 hover:border-blue-400 hover:bg-blue-50 rounded-lg p-4 cursor-pointer transition">
+                    <div class="flex items-center gap-2 mb-1">
+                      <span class="text-xl" x-text="t.icon"></span>
+                      <span class="font-semibold text-gray-800" x-text="t.label"></span>
+                    </div>
+                    <div class="text-xs text-gray-500" x-text="t.desc"></div>
+                    <div class="text-[10px] text-gray-400 mt-2" x-text="'归属：' + getModule(t.module).name"></div>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </template>
+
+          <!-- Step 2：填表 -->
+          <template x-if="createStep === 2">
+            <div class="space-y-3">
+              <div class="flex items-center gap-2 text-xs text-gray-500">
+                <button @click="createStep = 1" class="text-blue-600 hover:underline">← 返回选类型</button>
+                <span>·</span>
+                <span x-text="'当前：' + createType.icon + ' ' + createType.label"></span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="text-xs text-gray-600 mb-1 block">归属模块 <span class="text-red-500">*</span></label>
+                  <select x-model="createForm.module"
+                          class="w-full bg-gray-50 border border-gray-200 focus:border-blue-400 outline-none rounded-lg p-2 text-sm">
+                    <template x-for="m in modules.filter(x => !['home','datahub','reports'].includes(x.id))" :key="m.id">
+                      <option :value="m.id" x-text="m.icon + ' ' + m.num + ' ' + m.name"></option>
+                    </template>
+                  </select>
+                </div>
+                <div>
+                  <label class="text-xs text-gray-600 mb-1 block">作者</label>
+                  <input type="text" value="当前用户" disabled
+                         class="w-full bg-gray-100 border border-gray-200 rounded-lg p-2 text-sm text-gray-500">
+                </div>
+              </div>
+
+              <div>
+                <label class="text-xs text-gray-600 mb-1 block">标题 <span class="text-red-500">*</span></label>
+                <input type="text" x-model="createForm.title"
+                       :placeholder="createType?.id === 'sop' ? '如：跨境付款审批流程' : createType?.id === 'knowledge' ? '如：股权激励的会计处理' : createType?.id === 'project' ? '如：B 轮融资项目档案' : '如：客户对账函模板'"
+                       class="w-full bg-gray-50 border border-gray-200 focus:border-blue-400 outline-none rounded-lg p-2 text-sm">
+              </div>
+
+              <div>
+                <label class="text-xs text-gray-600 mb-1 block">标签（用逗号分隔）</label>
+                <input type="text" x-model="createForm.tags"
+                       placeholder="如：税务, 跨境, 外管"
+                       class="w-full bg-gray-50 border border-gray-200 focus:border-blue-400 outline-none rounded-lg p-2 text-sm">
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <label class="text-xs text-gray-600">正文（Markdown，支持 [[文档ID]] wiki link）</label>
+                  <button @click="aiDraftDoc()"
+                          :disabled="createDrafting"
+                          class="text-xs px-2 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded transition flex items-center gap-1 disabled:opacity-50">
+                    <span x-show="!createDrafting">✨ AI 帮我起草</span>
+                    <span x-show="createDrafting">起草中…</span>
+                  </button>
+                </div>
+                <textarea x-model="createForm.body" rows="14"
+                          class="w-full bg-gray-50 border border-gray-200 focus:border-blue-400 outline-none rounded-lg p-3 text-xs font-mono leading-relaxed"
+                          placeholder="在这里写 Markdown..."></textarea>
+                <div class="text-[10px] text-gray-400 mt-1">提示：保存时会自动按规范生成 frontmatter（owner / updated / version / tags / related），无需手填</div>
+              </div>
+
+              <!-- 实时预览 -->
+              <details class="bg-gray-50 rounded-lg border border-gray-200">
+                <summary class="px-3 py-2 text-xs text-gray-600 cursor-pointer hover:bg-gray-100">👁 实时预览</summary>
+                <div class="p-4 prose-doc bg-white" x-html="renderMd(createForm.body || '_（在上方输入 markdown 后这里会实时渲染）_')"></div>
+              </details>
+
+              <div class="flex justify-between items-center pt-2">
+                <div class="text-xs text-gray-400">提交后将进入评审队列（CFO + 1 名同事）</div>
+                <button @click="submitCreate()"
+                        class="px-5 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition">
+                  📤 提交评审
+                </button>
+              </div>
+            </div>
+          </template>
+        </div>
+      </template>
+
+      <!-- ======== Tab 2：上传文件 ======== -->
+      <template x-if="contributeTab === 'upload'">
+        <div>
+          <div class="text-xs text-gray-500 mb-3">支持合同 PDF、报表 Excel、发票凭证图片。上传后由 OCR 识别 + LLM 自动归类到合适模块。</div>
+
+          <label for="upload-input"
+                 class="block border-2 border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50 rounded-lg p-10 text-center cursor-pointer transition">
+            <div class="text-5xl mb-3">📎</div>
+            <div class="text-sm text-gray-700 font-medium mb-1">点击或拖拽上传文件</div>
+            <div class="text-xs text-gray-400">PDF · XLSX · DOCX · PNG · JPG（单文件 ≤ 50MB）</div>
+            <input id="upload-input" type="file" multiple class="hidden" @change="handleFileUpload($event)">
+          </label>
+
+          <div x-show="uploadedFiles.length > 0" class="mt-4">
+            <div class="text-xs text-gray-500 mb-2">上传队列</div>
+            <div class="space-y-2">
+              <template x-for="(f, idx) in uploadedFiles" :key="idx">
+                <div class="bg-gray-50 border border-gray-200 rounded-lg p-3 flex items-center gap-3">
+                  <span class="text-xl shrink-0">📄</span>
+                  <div class="flex-1 min-w-0">
+                    <div class="text-sm font-medium text-gray-800 truncate" x-text="f.name"></div>
+                    <div class="text-xs text-gray-400" x-text="f.size + ' · ' + f.status"></div>
+                    <div x-show="f.module" class="text-xs text-blue-600 mt-1">
+                      🤖 自动归类到：<span x-text="getModule(f.module).icon + ' ' + getModule(f.module).name"></span>
+                      <span x-show="f.suggestedTags" class="ml-2 text-gray-400">建议标签：<span x-text="(f.suggestedTags || []).join('、')"></span></span>
+                    </div>
+                  </div>
+                  <span x-show="!f.module" class="text-xs text-amber-600 shrink-0">处理中…</span>
+                  <span x-show="f.module" class="text-xs text-green-600 shrink-0">✓ 完成</span>
+                </div>
+              </template>
+            </div>
+          </div>
+
+          <div class="mt-5 p-3 bg-blue-50 rounded-lg text-xs text-blue-700 border border-blue-100">
+            <div class="font-semibold mb-1">💡 真实接入说明</div>
+            上传管道：对象存储 → OCR（textract / aliyun OCR）→ <code>LLM.classifyDoc</code> 自动归类 → 抽取 frontmatter → 入库 → 通知贡献者审阅。详见 <code>integrations.js</code> 的 <code>FileIngest.upload</code>。
+          </div>
+        </div>
+      </template>
+
+      <!-- ======== Tab 3：提议 Skill（指向已有的 Skills 工坊弹层） ======== -->
+      <template x-if="contributeTab === 'skill'">
+        <div class="text-center py-10">
+          <div class="text-5xl mb-3">🛠️</div>
+          <div class="text-sm text-gray-700 mb-2">把你解决过的问题封装为团队共享 Skill</div>
+          <div class="text-xs text-gray-500 mb-5 max-w-md mx-auto">每个 Skill 是一段可复用的工作流（生成报告、校验发票、对账等），写一次全团队都能调用。</div>
+          <button @click="closeContribute(); selectModule('skills'); $nextTick(() => showDraftSkill = true);"
+                  class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition">
+            ✨ 进入 Skills 工坊在线生成
+          </button>
+        </div>
+      </template>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 知识图谱（全屏 Obsidian 风格） ========== -->
+<div x-show="showGraph" x-cloak
+     x-transition:enter="transition ease-out duration-300"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     class="fixed inset-0 z-[60] flex flex-col"
+     style="background: radial-gradient(ellipse at center, #1e293b 0%, #0f172a 50%, #020617 100%);">
+
+  <!-- 顶部工具条 -->
+  <div class="px-6 py-3 flex items-center justify-between border-b border-white/10 backdrop-blur-sm bg-white/5 z-10">
+    <div class="flex items-center gap-3">
+      <span class="text-2xl">🕸</span>
+      <div>
+        <div class="text-white font-semibold tracking-wide">知识图谱 · Knowledge Graph</div>
+        <div class="text-[11px] text-blue-200/60">Obsidian 风格 · 体现 Karpathy LLM Wiki "知识互联"精髓</div>
+      </div>
+    </div>
+
+    <!-- 中间区：模块筛选 OR 时间轴控制 -->
+    <div class="flex items-center gap-2">
+      <!-- 时间轴模式切换按钮（始终显示） -->
+      <button @click="toggleTimelineMode()"
+              :class="graphTimeline ? 'bg-purple-500/30 border-purple-400 text-white' : 'bg-white/5 border-white/10 text-white/60 hover:bg-white/10'"
+              class="px-2.5 py-1 rounded text-[11px] border transition flex items-center gap-1 mr-2"
+              :title="graphTimeline ? '退出时间轴' : '播放知识库的成长过程'">
+        <span x-text="graphTimeline ? '⏹' : '⏱'"></span>
+        <span x-text="graphTimeline ? '退出时间轴' : '时间轴'"></span>
+      </button>
+
+      <!-- 时间轴模式：播放控制 -->
+      <template x-if="graphTimeline">
+        <div class="flex items-center gap-2 bg-white/5 px-3 py-1 rounded-lg border border-white/10">
+          <button @click="resetTimeline()" class="text-white/70 hover:text-white text-sm w-6 transition" title="回到起点">⏮</button>
+          <button @click="playPauseTimeline()" class="text-white text-base w-6 transition" :title="graphTimelinePlaying ? '暂停' : '播放'">
+            <span x-show="!graphTimelinePlaying">▶</span>
+            <span x-show="graphTimelinePlaying">⏸</span>
+          </button>
+          <button @click="stepTimelineForward()" class="text-white/70 hover:text-white text-sm w-6 transition" title="下一步">⏭</button>
+          <div class="text-xs text-white font-mono pl-3 border-l border-white/10" x-text="graphTimelineCurrentDate"></div>
+          <div class="text-[10px] text-white/40 pl-2">
+            <span class="text-blue-300 font-mono" x-text="graphTimelineStep + 1"></span> / <span x-text="graphTimelineDocs.length"></span>
+          </div>
+        </div>
+      </template>
+
+      <!-- 非时间轴模式：模块筛选 chip -->
+      <template x-if="!graphTimeline">
+        <div class="flex items-center gap-1">
+          <span class="text-[10px] text-white/40 uppercase tracking-wide mr-1">筛选</span>
+          <template x-for="m in modules.filter(x => moduleDocs[x.id])" :key="m.id">
+            <button @click="toggleGraphModule(m.id)"
+                    :class="graphModules.includes(m.id) ? 'bg-white/15 border-white/30 text-white' : 'bg-white/5 border-white/10 text-white/40 hover:bg-white/10'"
+                    class="px-2 py-1 rounded text-[11px] border transition flex items-center gap-1">
+              <span x-text="m.icon"></span>
+              <span x-text="m.name"></span>
+            </button>
+          </template>
+        </div>
+      </template>
+    </div>
+
+    <button @click="closeGraph()"
+            class="text-white/60 hover:text-white text-3xl leading-none w-9 h-9 flex items-center justify-center rounded-lg hover:bg-white/10 transition">
+      ×
+    </button>
+  </div>
+
+  <!-- 画布区 -->
+  <div class="flex-1 relative overflow-hidden">
+    <div id="graph-canvas" class="absolute inset-0"></div>
+
+    <!-- 顶部右侧操作提示 -->
+    <div class="absolute top-4 right-4 bg-white/5 backdrop-blur rounded-lg px-3 py-2 border border-white/10 text-[11px] text-white/60 flex gap-3">
+      <span>🖱 拖拽节点</span>
+      <span>· 滚轮缩放</span>
+      <span>· hover 高亮邻居</span>
+      <span>· 点击进入文档</span>
+    </div>
+
+    <!-- 左下：图例 -->
+    <div class="absolute left-6 bg-white/5 backdrop-blur rounded-lg p-3 border border-white/10 min-w-[180px] transition-all"
+         :class="graphTimeline ? 'bottom-14' : 'bottom-6'">
+      <div class="text-[10px] text-white/40 mb-2 uppercase tracking-wider">模块图例</div>
+      <div class="space-y-1.5">
+        <template x-for="(m, i) in modules.filter(x => moduleDocs[x.id])" :key="m.id">
+          <div class="flex items-center gap-2 text-xs"
+               :class="graphModules.includes(m.id) ? 'text-white/90' : 'text-white/30'">
+            <span class="w-3 h-3 rounded-full shrink-0"
+                  :style="'background:' + graphColors[modules.findIndex(x => x.id === m.id) % graphColors.length] + (graphModules.includes(m.id) ? '' : ';opacity:0.3')"></span>
+            <span x-text="m.name"></span>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <!-- 右下：统计 -->
+    <div class="absolute right-6 bg-white/5 backdrop-blur rounded-lg p-3 border border-white/10 text-right min-w-[160px] transition-all"
+         :class="graphTimeline ? 'bottom-14' : 'bottom-6'">
+      <div class="text-[10px] text-white/40 mb-2 uppercase tracking-wider">图谱统计</div>
+      <div class="space-y-1 text-xs">
+        <div class="text-white/70">📄 <span class="font-mono text-blue-300 text-sm" x-text="graphStats.nodes"></span> 篇文档</div>
+        <div class="text-white/70">🔗 <span class="font-mono text-purple-300 text-sm" x-text="graphStats.edges"></span> 条关联</div>
+        <div class="text-white/70">🏷 <span class="font-mono text-pink-300 text-sm" x-text="graphStats.tags"></span> 个标签</div>
+        <div class="text-white/40 text-[10px] mt-1.5 pt-1.5 border-t border-white/10">点节点查看详情</div>
+      </div>
+    </div>
+
+    <!-- 时间轴模式：底部进度条 + 起止日期 -->
+    <template x-if="graphTimeline">
+      <div class="absolute bottom-0 left-0 right-0">
+        <div class="px-6 py-2 flex items-center justify-between text-[10px] text-white/40 font-mono">
+          <span>始 · <span x-text="graphTimelineDates[0] || ''"></span></span>
+          <span class="text-white/60">📈 知识库成长时间轴 · 节点按更新时间逐渐生长</span>
+          <span><span x-text="graphTimelineDates[graphTimelineDates.length - 1] || ''"></span> · 今</span>
+        </div>
+        <div class="h-1 bg-white/5">
+          <div class="h-full bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 transition-all duration-500"
+               :style="'width: ' + ((graphTimelineStep + 1) / Math.max(1, graphTimelineDocs.length) * 100) + '%'"></div>
+        </div>
+      </div>
+    </template>
+
+    <!-- 节点详情卡片（hover/click 后浮现） -->
+    <div x-show="graphHover" x-cloak x-transition
+         class="absolute top-20 left-6 bg-white/10 backdrop-blur-md rounded-lg p-4 border border-white/20 max-w-xs shadow-2xl"
+         style="box-shadow: 0 20px 40px rgba(0,0,0,0.4);">
+      <template x-if="graphHover">
+        <div>
+          <div class="text-[10px] text-blue-300/80 mb-1" x-text="getModule(getModuleByDoc(graphHover.id)).num + ' · ' + getModule(getModuleByDoc(graphHover.id)).name"></div>
+          <div class="text-white font-semibold mb-2" x-text="graphHover.title"></div>
+          <div class="flex flex-wrap gap-1 mb-2">
+            <template x-for="t in (graphHover.tags || [])" :key="t">
+              <span class="text-[10px] px-1.5 py-0.5 bg-white/10 text-white/70 rounded" x-text="t"></span>
+            </template>
+          </div>
+          <div class="text-[11px] text-white/50">
+            👤 <span x-text="graphHover.owner"></span> · 📅 <span x-text="graphHover.updated"></span>
+          </div>
+          <div class="text-[11px] text-white/50 mt-1">
+            🔗 关联文档 <span class="font-mono text-blue-300" x-text="graphHover.degree"></span> 篇
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</div>
+
+<!-- ========== Toast ========== -->
+<div x-show="toast.show" x-cloak
+     x-transition:enter="transition ease-out duration-300"
+     x-transition:enter-start="opacity-0 translate-y-2"
+     x-transition:enter-end="opacity-100 translate-y-0"
+     class="fixed bottom-6 right-6 z-50 bg-gray-900 text-white px-4 py-3 rounded-lg shadow-lg max-w-sm text-sm">
+  <span x-text="toast.msg"></span>
+</div>
+
+<!-- ========== Alpine 应用 ========== -->
+<script>
+function app() {
+  return {
+    // 数据快捷引用
+    team:        mockData.team,
+    modules:     mockData.modules,
+    moduleDocs:  mockData.moduleDocs,
+    docs:        mockData.docs,
+    qa:          mockData.qa,
+    skills:      mockData.skills,
+    kpis:        mockData.kpis,
+    archiveReports: [
+      { title: '2026 年 3 月经营月报', date: '2026-04-08', author: 'monthly-report skill' },
+      { title: '2026 年 2 月经营月报', date: '2026-03-07', author: 'monthly-report skill' },
+      { title: '2026 年 Q1 季度报告', date: '2026-04-15', author: 'CFO' },
+    ],
+
+    // 当前导航
+    currentModuleId: 'home',
+    currentDocId:    null,
+
+    // 搜索
+    searchQuery:  '',
+    searchFocus:  false,
+    get searchResults() {
+      if (!this.searchQuery) return [];
+      const q = this.searchQuery.toLowerCase();
+      const results = [];
+      for (const [docId, doc] of Object.entries(this.docs)) {
+        const hay = (doc.meta.title + ' ' + (doc.meta.tags || []).join(' ') + ' ' + doc.body).toLowerCase();
+        if (hay.includes(q)) {
+          // 找到所属模块
+          let moduleId = 'knowledge';
+          for (const [mid, ds] of Object.entries(this.moduleDocs)) {
+            if (ds.find(d => d.id === docId)) { moduleId = mid; break; }
+          }
+          results.push({
+            id: docId,
+            moduleId,
+            title: doc.meta.title,
+            snippet: (doc.meta.tags || []).join(' · '),
+          });
+        }
+      }
+      return results.slice(0, 6);
+    },
+
+    // AI 助手
+    chatHistory:  [],
+    chatInput:    '',
+    chatLoading:  false,
+
+    // 月报生成
+    reportGenerating:    false,
+    reportProgress:      0,
+    reportProgressLabel: '',
+    reportData:          null,
+
+    // Skills
+    selectedSkill:    null,
+    showDraftSkill:   false,
+    draftForm:        { scenario: '', inputs: '', outputs: '', trigger: '' },
+    draftLoading:     false,
+    draftResult:      '',
+
+    // 知识图谱
+    showGraph:        false,
+    graphChart:       null,
+    graphHover:       null,
+    graphStats:       { nodes: 0, edges: 0, tags: 0 },
+    graphModules:     ['operations','knowledge','templates','projects','datahub','reports','skills'],
+    graphColors:      ['#60a5fa','#34d399','#a78bfa','#fbbf24','#f472b6','#22d3ee','#fb7185','#a3e635'],
+
+    // 时间轴
+    graphTimeline:        false,
+    graphTimelinePlaying: false,
+    graphTimelineStep:    0,
+    graphTimelineDocs:    [],     // 按 updated 时间排序的 docId 列表
+    graphTimelineDates:   [],     // 涉及到的所有日期（升序去重）
+    graphTimer:           null,
+    get graphTimelineCurrentDate() {
+      if (!this.graphTimelineDocs.length) return '';
+      const id = this.graphTimelineDocs[this.graphTimelineStep];
+      return this.docs[id]?.meta?.updated || '';
+    },
+
+    // 团队贡献入口
+    showContribute:  false,
+    contributeTab:   'create',           // create | upload | skill
+    createStep:      1,                  // 1=选类型 2=填表
+    createType:      null,
+    createTypes: [
+      { id: 'sop',       icon: '📋', label: 'SOP 流程',  module: 'operations', desc: '步骤、责任人、SLA、异常处理' },
+      { id: 'knowledge', icon: '📚', label: '知识沉淀',  module: 'knowledge',  desc: '税务、政策、行业、踩坑' },
+      { id: 'project',   icon: '📁', label: '项目档案',  module: 'projects',   desc: '融资、审计、系统上线' },
+      { id: 'template',  icon: '📄', label: '模板',      module: 'templates',  desc: '合同、报表、邮件话术' },
+    ],
+    createForm: { module: 'knowledge', title: '', tags: '', body: '' },
+    createDrafting: false,
+    uploadedFiles: [],
+
+    // Toast
+    toast: { show: false, msg: '' },
+
+    // ============ 初始化 ============
+    init() {
+      // 解析 hash 路由：#/moduleId 或 #/moduleId/docId
+      this.applyHash();
+      window.addEventListener('hashchange', () => this.applyHash());
+      // 监听模块变化，渲染仪表盘
+      this.$watch('currentModuleId', (id) => {
+        if (id === 'datahub') this.$nextTick(() => this.renderChart());
+      });
+    },
+
+    applyHash() {
+      const h = location.hash.replace(/^#\/?/, '').split('/');
+      if (h[0] && this.modules.find(m => m.id === h[0])) {
+        this.currentModuleId = h[0];
+        this.currentDocId = h[1] && this.docs[h[1]] ? h[1] : null;
+      }
+    },
+
+    updateHash() {
+      const h = '#/' + this.currentModuleId + (this.currentDocId ? '/' + this.currentDocId : '');
+      if (location.hash !== h) history.replaceState(null, '', h);
+    },
+
+    // ============ 导航 ============
+    selectModule(id) {
+      this.currentModuleId = id;
+      this.currentDocId = null;
+      this.updateHash();
+    },
+
+    selectDoc(docId) {
+      this.currentDocId = docId;
+      this.updateHash();
+    },
+
+    goToDoc(moduleId, docId) {
+      this.currentModuleId = moduleId;
+      this.currentDocId = docId;
+      this.updateHash();
+    },
+
+    getModule(id) {
+      return this.modules.find(m => m.id === id) || {};
+    },
+
+    getModuleByDoc(docId) {
+      for (const [mid, ds] of Object.entries(this.moduleDocs)) {
+        if (ds.find(d => d.id === docId)) return mid;
+      }
+      return 'knowledge';
+    },
+
+    // ============ Markdown ============
+    renderMd(text) {
+      if (!text) return '';
+      // 处理 wiki link [[xxx]] → 链接
+      const processed = text.replace(/\[\[([^\]]+)\]\]/g, (_, id) => {
+        const doc = this.docs[id];
+        return doc ? `<a href="#/${this.getModuleByDoc(id)}/${id}" class="text-blue-600 underline">${doc.meta.title}</a>` : id;
+      });
+      return marked.parse(processed);
+    },
+
+    // ============ AI 问答 ============
+    async askQuestion(q) {
+      const question = q.trim();
+      if (!question || this.chatLoading) return;
+      this.chatHistory.push({ role: 'user', content: question });
+      this.chatInput = '';
+      this.chatLoading = true;
+      this.scrollChatToBottom();
+      // 调用 LLM 接入桩
+      const res = await LLM.chat({ question });
+      this.chatHistory.push({
+        role: 'assistant',
+        content: res.answer,
+        citations: res.citations || [],
+      });
+      this.chatLoading = false;
+      this.scrollChatToBottom();
+      // 审计日志（接入桩示例）
+      Audit.log({ action: 'llm_chat', question, citations: res.citations });
+    },
+
+    scrollChatToBottom() {
+      this.$nextTick(() => {
+        const box = this.$refs.chatBox;
+        if (box) box.scrollTop = box.scrollHeight;
+      });
+    },
+
+    // ============ 月报生成 ============
+    async generateReport() {
+      this.reportGenerating = true;
+      this.reportProgress = 0;
+      this.reportData = null;
+      const steps = [
+        { p: 20,  label: '从数据中心拉取 KPI…' },
+        { p: 40,  label: '对比历史数据 + 计算环同比…' },
+        { p: 60,  label: '调用 Claude 生成经营分析…' },
+        { p: 85,  label: '套用月报模板…' },
+        { p: 100, label: '生成完成' },
+      ];
+      for (const s of steps) {
+        await new Promise(r => setTimeout(r, 500));
+        this.reportProgress = s.p;
+        this.reportProgressLabel = s.label;
+      }
+      // 调用 skill runtime 接入桩
+      const result = await LLM.runSkill({ name: 'monthly-report', inputs: { period: '2026-04' } });
+      this.reportData = result;
+      this.reportGenerating = false;
+    },
+
+    pushToFeishu() {
+      Feishu.pushMessage({
+        chatId: 'oc_finance_leaders',
+        card: { header: { title: { content: this.reportData.title } } },
+      });
+      this.showToast('✓ 已推送到飞书"财务管理层"群（mock）。生产环境会调用 Feishu.pushMessage 真实接口。');
+    },
+
+    // ============ Skills 在线生成 ============
+    async draftSkillSubmit() {
+      if (!this.draftForm.scenario) return;
+      this.draftLoading = true;
+      const md = await LLM.draftSkill(this.draftForm);
+      this.draftResult = md;
+      this.draftLoading = false;
+    },
+
+    submitForReview() {
+      this.showToast('✓ 已提交评审，CFO 和 1 名同事将在 24h 内反馈。');
+      this.closeDraft();
+    },
+
+    closeDraft() {
+      this.showDraftSkill = false;
+      this.draftResult = '';
+      this.draftForm = { scenario: '', inputs: '', outputs: '', trigger: '' };
+    },
+
+    // ============ 知识图谱 ============
+    openGraph() {
+      this.showGraph = true;
+      this.graphHover = null;
+      this.$nextTick(() => this.renderGraph());
+    },
+
+    closeGraph() {
+      this.showGraph = false;
+      this.graphHover = null;
+      this.exitTimeline();
+      if (this.graphChart) {
+        this.graphChart.dispose();
+        this.graphChart = null;
+      }
+    },
+
+    // 时间轴：进入/退出
+    toggleTimelineMode() {
+      if (this.graphTimeline) this.exitTimeline();
+      else this.enterTimeline();
+    },
+
+    enterTimeline() {
+      // 收集所有 doc 按 updated 排序
+      const all = [];
+      for (const [id, doc] of Object.entries(this.docs)) {
+        if (doc.meta && doc.meta.updated) all.push({ id, date: doc.meta.updated });
+      }
+      all.sort((a, b) => a.date.localeCompare(b.date));
+      this.graphTimelineDocs  = all.map(x => x.id);
+      this.graphTimelineDates = [...new Set(all.map(x => x.date))].sort();
+      this.graphTimelineStep  = 0;
+      this.graphTimeline      = true;
+      this.graphHover         = null;
+      this.renderGraph();
+      // 自动开始播放
+      this.playPauseTimeline();
+    },
+
+    exitTimeline() {
+      this.pauseGraphTimer();
+      const wasOn = this.graphTimeline;
+      this.graphTimeline = false;
+      this.graphTimelinePlaying = false;
+      if (wasOn && this.graphChart) this.renderGraph();
+    },
+
+    playPauseTimeline() {
+      if (this.graphTimelinePlaying) {
+        this.pauseGraphTimer();
+        this.graphTimelinePlaying = false;
+        return;
+      }
+      // 已经播完，则从头开始
+      if (this.graphTimelineStep >= this.graphTimelineDocs.length - 1) {
+        this.graphTimelineStep = -1;
+      }
+      this.graphTimelinePlaying = true;
+      this.graphTimer = setInterval(() => {
+        this.graphTimelineStep++;
+        if (this.graphTimelineStep >= this.graphTimelineDocs.length - 1) {
+          this.graphTimelineStep = this.graphTimelineDocs.length - 1;
+          this.pauseGraphTimer();
+          this.graphTimelinePlaying = false;
+        }
+        this.renderGraph();
+      }, 950);
+    },
+
+    pauseGraphTimer() {
+      if (this.graphTimer) {
+        clearInterval(this.graphTimer);
+        this.graphTimer = null;
+      }
+    },
+
+    stepTimelineForward() {
+      this.pauseGraphTimer();
+      this.graphTimelinePlaying = false;
+      if (this.graphTimelineStep < this.graphTimelineDocs.length - 1) {
+        this.graphTimelineStep++;
+        this.renderGraph();
+      }
+    },
+
+    resetTimeline() {
+      this.pauseGraphTimer();
+      this.graphTimelinePlaying = false;
+      this.graphTimelineStep = 0;
+      this.renderGraph();
+    },
+
+    toggleGraphModule(mid) {
+      if (this.graphModules.includes(mid)) {
+        // 至少保留一个，避免空图
+        if (this.graphModules.length > 1) {
+          this.graphModules = this.graphModules.filter(x => x !== mid);
+        }
+      } else {
+        this.graphModules.push(mid);
+      }
+      this.renderGraph();
+    },
+
+    renderGraph() {
+      const el = document.getElementById('graph-canvas');
+      if (!el) return;
+      if (this.graphChart) this.graphChart.dispose();
+      this.graphChart = echarts.init(el);
+
+      // 模块到颜色的映射（按八大模块顺序）
+      const colorByModule = {};
+      this.modules.forEach((m, i) => { colorByModule[m.id] = this.graphColors[i % this.graphColors.length]; });
+
+      // 哪些 doc 在筛选范围内
+      const includedIds = new Set();
+      if (this.graphTimeline) {
+        // 时间轴模式：只显示 step 之前的所有文档
+        for (let i = 0; i <= this.graphTimelineStep; i++) {
+          const id = this.graphTimelineDocs[i];
+          if (id && this.docs[id]) includedIds.add(id);
+        }
+      } else {
+        // 普通模式：按模块筛选
+        for (const mid of this.graphModules) {
+          for (const d of (this.moduleDocs[mid] || [])) {
+            if (this.docs[d.id]) includedIds.add(d.id);
+          }
+        }
+      }
+      // 时间轴当前刚加入的节点（高亮）
+      const justAddedId = this.graphTimeline ? this.graphTimelineDocs[this.graphTimelineStep] : null;
+
+      // 边（去重 + 计算度数）
+      const linkSeen = new Set();
+      const links = [];
+      const degree = {};
+      for (const id of includedIds) {
+        const doc = this.docs[id];
+        for (const rel of (doc.meta.related || [])) {
+          if (!includedIds.has(rel)) continue;
+          const key = [id, rel].sort().join('|');
+          if (linkSeen.has(key)) continue;
+          linkSeen.add(key);
+          links.push({
+            source: id,
+            target: rel,
+            lineStyle: { color: colorByModule[this.getModuleByDoc(id)], opacity: 0.35, width: 1.5, curveness: 0.15 },
+          });
+          degree[id]  = (degree[id]  || 0) + 1;
+          degree[rel] = (degree[rel] || 0) + 1;
+        }
+      }
+
+      // 节点
+      const allTags = new Set();
+      const nodes = [];
+      for (const id of includedIds) {
+        const doc = this.docs[id];
+        const mid = this.getModuleByDoc(id);
+        const color = colorByModule[mid];
+        (doc.meta.tags || []).forEach(t => allTags.add(t));
+        const deg = degree[id] || 0;
+        const isNew = id === justAddedId;
+        nodes.push({
+          id,
+          name: doc.meta.title,
+          symbolSize: (22 + deg * 5) * (isNew ? 1.7 : 1),
+          category: this.modules.findIndex(m => m.id === mid),
+          itemStyle: {
+            color,
+            shadowBlur: isNew ? 45 : 20,
+            shadowColor: color,
+            borderColor: isNew ? '#ffffff' : 'rgba(255,255,255,0.6)',
+            borderWidth: isNew ? 2.5 : 1,
+          },
+          label: {
+            show: true,
+            position: 'right',
+            color: isNew ? '#ffffff' : '#e2e8f0',
+            fontSize: isNew ? 14 : 11,
+            fontWeight: isNew ? 700 : 500,
+            distance: 8,
+          },
+          _meta: { title: doc.meta.title, owner: doc.meta.owner, updated: doc.meta.updated, tags: doc.meta.tags, degree: deg },
+        });
+      }
+
+      this.graphStats = { nodes: nodes.length, edges: links.length, tags: allTags.size };
+
+      const categories = this.modules.map(m => ({ name: m.name }));
+
+      this.graphChart.setOption({
+        backgroundColor: 'transparent',
+        animationDurationUpdate: 700,
+        animationEasingUpdate: 'cubicInOut',
+        tooltip: {
+          show: false, // 自定义浮卡，关闭原生 tooltip
+        },
+        series: [{
+          type: 'graph',
+          layout: 'force',
+          roam: true,
+          draggable: true,
+          categories,
+          nodes,
+          links,
+          force: {
+            repulsion: 600,
+            edgeLength: [80, 180],
+            gravity: 0.06,
+            friction: 0.6,
+          },
+          lineStyle: { curveness: 0.15, opacity: 0.35, width: 1.5 },
+          emphasis: {
+            focus: 'adjacency',
+            scale: 1.2,
+            label: { fontSize: 13, fontWeight: 700, color: '#fff' },
+            lineStyle: { width: 3, opacity: 1 },
+            itemStyle: { shadowBlur: 30 },
+          },
+          edgeSymbol: ['none', 'arrow'],
+          edgeSymbolSize: [0, 6],
+        }],
+      });
+
+      // 事件：hover 显示详情卡
+      this.graphChart.on('mouseover', (params) => {
+        if (params.dataType === 'node' && params.data._meta) {
+          this.graphHover = { id: params.data.id, ...params.data._meta };
+        }
+      });
+      this.graphChart.on('mouseout', () => { this.graphHover = null; });
+      // 点击进入文档
+      this.graphChart.on('click', (params) => {
+        if (params.dataType === 'node') {
+          const moduleId = this.getModuleByDoc(params.data.id);
+          this.closeGraph();
+          this.goToDoc(moduleId, params.data.id);
+        }
+      });
+
+      // 响应窗口大小
+      if (!this._graphResizeBound) {
+        window.addEventListener('resize', () => {
+          if (this.graphChart && this.showGraph) this.graphChart.resize();
+        });
+        this._graphResizeBound = true;
+      }
+    },
+
+    // ============ 团队贡献入口 ============
+    openContribute() {
+      this.showContribute = true;
+      this.contributeTab  = 'create';
+      this.createStep     = 1;
+      this.createType     = null;
+      this.createForm     = {
+        module: ['home','datahub','reports','skills'].includes(this.currentModuleId)
+                  ? 'knowledge' : this.currentModuleId,
+        title: '', tags: '', body: '',
+      };
+      this.uploadedFiles = [];
+    },
+
+    openContributeForModule(moduleId) {
+      this.openContribute();
+      this.createForm.module = moduleId;
+      // 自动选中匹配的模板类型
+      const t = this.createTypes.find(x => x.module === moduleId);
+      if (t) this.selectCreateType(t);
+    },
+
+    selectCreateType(type) {
+      this.createType = type;
+      this.createForm.module = type.module;
+      // 调一次 LLM 起草接入桩，预填模板骨架
+      LLM.draftDoc({ title: '（待填）', type: type.id }).then(md => {
+        if (this.createType === type && !this.createForm.body) this.createForm.body = md;
+      });
+      this.createStep = 2;
+    },
+
+    async aiDraftDoc() {
+      if (!this.createForm.title.trim()) {
+        this.showToast('请先填写标题，AI 才能围绕标题起草');
+        return;
+      }
+      this.createDrafting = true;
+      const md = await LLM.draftDoc({
+        title: this.createForm.title,
+        type: this.createType?.id || 'knowledge',
+      });
+      this.createForm.body = md;
+      this.createDrafting = false;
+      this.showToast('✓ 已为你起草初稿，请精修后提交');
+    },
+
+    submitCreate() {
+      if (!this.createForm.title.trim()) { this.showToast('标题不能为空'); return; }
+      if (!this.createForm.body.trim())  { this.showToast('正文不能为空'); return; }
+      const id = 'user-' + Date.now();
+      const tags = this.createForm.tags.split(/[,， ]+/).map(s => s.trim()).filter(Boolean);
+      // 真实新增到内存中的 mockData
+      this.docs[id] = {
+        meta: {
+          title:   this.createForm.title,
+          owner:   '当前用户',
+          updated: new Date().toISOString().slice(0, 10),
+          version: '1.0',
+          tags:    tags.length ? tags : ['待审阅'],
+          related: [],
+        },
+        body: this.createForm.body,
+      };
+      if (!this.moduleDocs[this.createForm.module]) this.moduleDocs[this.createForm.module] = [];
+      this.moduleDocs[this.createForm.module].push({ id, title: this.createForm.title });
+      Audit.log({ action: 'doc_create', docId: id, title: this.createForm.title });
+      this.showToast('✓ 已提交评审。审批通过后将正式发布到「' + this.getModule(this.createForm.module).name + '」');
+      this.closeContribute();
+      this.goToDoc(this.createForm.module, id);
+    },
+
+    closeContribute() {
+      this.showContribute = false;
+      this.createStep = 1;
+      this.createType = null;
+    },
+
+    async handleFileUpload(event) {
+      const files = Array.from(event.target.files || []);
+      // 重置 input，便于同名文件再次上传
+      event.target.value = '';
+      for (const file of files) {
+        const item = {
+          name:           file.name,
+          size:           (file.size / 1024).toFixed(1) + ' KB',
+          status:         'OCR 识别中…',
+          module:         null,
+          suggestedTags:  null,
+        };
+        this.uploadedFiles.push(item);
+        // 调接入桩
+        const result = await FileIngest.upload({ file });
+        item.module        = result.classifiedModule;
+        item.suggestedTags = result.suggestedTags;
+        item.status        = '已识别 + 已归档';
+        // 真实加到目标模块
+        const id = 'upload-' + Date.now();
+        this.docs[id] = {
+          meta: {
+            title:   file.name.replace(/\.[^.]+$/, ''),
+            owner:   '当前用户（上传）',
+            updated: new Date().toISOString().slice(0, 10),
+            version: '1.0',
+            tags:    result.suggestedTags || ['上传'],
+            related: [],
+          },
+          body: '## 来源\n本文档由文件上传自动生成。\n\n- 原始文件名：`' + file.name + '`\n- OCR 文本：（mock 占位）\n- 自动归类：' + this.getModule(result.classifiedModule).name + '\n\n_请贡献者人工审阅、补充结构化内容。_',
+        };
+        if (!this.moduleDocs[result.classifiedModule]) this.moduleDocs[result.classifiedModule] = [];
+        this.moduleDocs[result.classifiedModule].push({ id, title: item.name });
+      }
+    },
+
+    saveDialogAsKnowledge(idx) {
+      const ans = this.chatHistory[idx];
+      const q   = idx > 0 && this.chatHistory[idx - 1].role === 'user' ? this.chatHistory[idx - 1].content : '（无问题）';
+      this.openContribute();
+      // 自动选中"知识沉淀"模板
+      const t = this.createTypes.find(x => x.id === 'knowledge');
+      this.selectCreateType(t);
+      this.createForm.title = q.slice(0, 30);
+      this.createForm.tags = 'AI 沉淀, 待审阅';
+      this.createForm.body = '## 来自 AI 对话的整理\n_由对话自动生成，请贡献者审阅后发布_\n\n### 原问题\n> ' + q + '\n\n### AI 回答\n' + ans.content + '\n\n### 待补充\n- [ ] 补充政策依据 / 文号\n- [ ] 补充实际案例\n- [ ] 关联到现有文档';
+      this.showToast('已把对话整理成草稿，请补充后提交评审');
+    },
+
+    editCurrentDoc() {
+      const doc = this.docs[this.currentDocId];
+      if (!doc) return;
+      this.openContribute();
+      // 找匹配类型
+      const moduleId = this.getModuleByDoc(this.currentDocId);
+      const t = this.createTypes.find(x => x.module === moduleId) || this.createTypes[1];
+      this.createType = t;
+      this.createStep = 2;
+      this.createForm = {
+        module: moduleId,
+        title:  doc.meta.title,
+        tags:   (doc.meta.tags || []).join(', '),
+        body:   doc.body,
+      };
+      this.showToast('编辑模式：保存后将作为新版本发布（mock）');
+    },
+
+    // ============ Toast ============
+    showToast(msg) {
+      this.toast = { show: true, msg };
+      setTimeout(() => { this.toast.show = false; }, 3500);
+    },
+
+    // ============ ECharts 仪表盘 ============
+    renderChart() {
+      const el = document.getElementById('revenue-chart');
+      if (!el) return;
+      const chart = echarts.init(el);
+      chart.setOption({
+        tooltip: { trigger: 'axis' },
+        legend: { data: ['实际', '预算'], right: 0, top: 0 },
+        grid: { left: 30, right: 10, bottom: 30, top: 30 },
+        xAxis: { type: 'category', data: this.kpis.revenueTrend.months, axisLine: { lineStyle: { color: '#d1d5db' } } },
+        yAxis: { type: 'value', axisLine: { show: false }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+        series: [
+          { name: '实际', type: 'bar', data: this.kpis.revenueTrend.actual, itemStyle: { color: '#3370ff' }, barWidth: 24 },
+          { name: '预算', type: 'line', data: this.kpis.revenueTrend.budget, lineStyle: { color: '#a78bfa', type: 'dashed' }, itemStyle: { color: '#a78bfa' } },
+        ],
+      });
+    },
+
+  };
+}
+</script>
+
+</body>
+</html>
