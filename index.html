@@ -25,30 +25,34 @@
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js"></script>
 
 <style>
-  html { font-family: 'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif; }
-  body { background: #f7f8fa; color: #1f2329; }
-  /* 飞书风格滚动条 */
+  html { font-family: 'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+  body { background: #f4f4f5; color: #18181b; letter-spacing: -0.01em; }
+  /* 极简滚动条 */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
-  /* Markdown 渲染样式 */
-  .prose-doc h1 { font-size: 1.875rem; font-weight: 700; margin: 1.5rem 0 1rem; color: #1f2329; }
-  .prose-doc h2 { font-size: 1.375rem; font-weight: 600; margin: 1.5rem 0 0.75rem; color: #1f2329; border-bottom: 1px solid #e5e6eb; padding-bottom: 0.5rem; }
-  .prose-doc h3 { font-size: 1.125rem; font-weight: 600; margin: 1.25rem 0 0.5rem; color: #1f2329; }
-  .prose-doc p { margin: 0.75rem 0; line-height: 1.75; color: #4e5969; }
-  .prose-doc ul, .prose-doc ol { margin: 0.75rem 0; padding-left: 1.5rem; line-height: 1.75; color: #4e5969; }
+  ::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #a1a1aa; }
+  /* Markdown 渲染样式 — Notion 风 */
+  .prose-doc h1 { font-size: 1.875rem; font-weight: 700; margin: 1.75rem 0 1rem; color: #18181b; letter-spacing: -0.02em; }
+  .prose-doc h2 { font-size: 1.375rem; font-weight: 600; margin: 1.75rem 0 0.75rem; color: #18181b; letter-spacing: -0.015em; padding-bottom: 0.5rem; border-bottom: 1px solid #e4e4e7; }
+  .prose-doc h3 { font-size: 1.0625rem; font-weight: 600; margin: 1.25rem 0 0.5rem; color: #18181b; }
+  .prose-doc p { margin: 0.75rem 0; line-height: 1.75; color: #3f3f46; }
+  .prose-doc ul, .prose-doc ol { margin: 0.75rem 0; padding-left: 1.5rem; line-height: 1.8; color: #3f3f46; }
   .prose-doc li { margin: 0.25rem 0; }
-  .prose-doc strong { color: #1f2329; font-weight: 600; }
-  .prose-doc table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.875rem; }
-  .prose-doc th, .prose-doc td { border: 1px solid #e5e6eb; padding: 0.5rem 0.75rem; text-align: left; }
-  .prose-doc th { background: #f7f8fa; font-weight: 600; color: #1f2329; }
-  .prose-doc code { background: #f2f3f5; padding: 0.125rem 0.375rem; border-radius: 4px; font-size: 0.875em; color: #d63384; }
-  .prose-doc pre { background: #1f2329; color: #f5f5f5; padding: 1rem; border-radius: 6px; overflow-x: auto; margin: 1rem 0; }
+  .prose-doc strong { color: #18181b; font-weight: 600; }
+  .prose-doc table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.875rem; }
+  .prose-doc th, .prose-doc td { border: 1px solid #e4e4e7; padding: 0.5rem 0.75rem; text-align: left; }
+  .prose-doc th { background: #fafafa; font-weight: 600; color: #18181b; font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  .prose-doc code { background: #f4f4f5; padding: 0.125rem 0.375rem; border-radius: 4px; font-size: 0.875em; color: #18181b; font-family: 'SF Mono', Monaco, monospace; }
+  .prose-doc pre { background: #18181b; color: #f4f4f5; padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 1rem 0; border: 1px solid #27272a; }
   .prose-doc pre code { background: transparent; color: inherit; padding: 0; }
-  .prose-doc blockquote { border-left: 3px solid #3370ff; padding: 0.5rem 1rem; background: #f0f7ff; color: #4e5969; margin: 1rem 0; }
-  /* 闪烁动画 */
-  @keyframes pulse-blue { 0%, 100% { box-shadow: 0 0 0 0 rgba(51, 112, 255, 0.4); } 50% { box-shadow: 0 0 0 8px rgba(51, 112, 255, 0); } }
-  .pulse-blue { animation: pulse-blue 1.5s infinite; }
+  .prose-doc blockquote { border-left: 3px solid #18181b; padding: 0.5rem 1rem; background: #fafafa; color: #3f3f46; margin: 1rem 0; }
+  .prose-doc a { color: #18181b; text-decoration: underline; text-decoration-color: #a1a1aa; text-underline-offset: 3px; }
+  .prose-doc a:hover { text-decoration-color: #18181b; }
+  /* 主按钮脉冲（黑色） */
+  @keyframes pulse-dark { 0%, 100% { box-shadow: 0 0 0 0 rgba(24, 24, 27, 0.25); } 50% { box-shadow: 0 0 0 8px rgba(24, 24, 27, 0); } }
+  .pulse-dark { animation: pulse-dark 1.8s infinite; }
+  /* 显示标题字号 */
+  .display-title { font-size: 2.5rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; color: #18181b; }
   [x-cloak] { display: none !important; }
 </style>
 </head>
@@ -56,61 +60,62 @@
 <body x-cloak x-data="app()" x-init="init()" class="overflow-hidden">
 
 <!-- ========== 顶部导航栏 ========== -->
-<header class="h-14 bg-white border-b border-gray-200 flex items-center px-4 gap-4 z-30 relative">
+<header class="h-14 bg-white border-b border-zinc-200 flex items-center px-5 gap-4 z-30 relative">
   <!-- Logo -->
-  <div class="flex items-center gap-2">
-    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white font-bold">A</div>
-    <span class="font-semibold text-gray-800">Acme 财务知识库</span>
-    <span class="text-xs text-gray-400 px-2 py-0.5 bg-gray-100 rounded">Demo</span>
+  <div class="flex items-center gap-2.5">
+    <div class="w-7 h-7 rounded-md bg-zinc-900 flex items-center justify-center text-white font-semibold text-sm">A</div>
+    <span class="font-semibold text-zinc-900 tracking-tight">Acme 财务知识库</span>
+    <span class="text-[10px] text-zinc-500 px-1.5 py-0.5 bg-zinc-100 rounded font-medium tracking-wide">DEMO</span>
   </div>
 
   <!-- 全局搜索 -->
-  <div class="flex-1 max-w-2xl mx-auto relative">
+  <div class="flex-1 max-w-xl mx-auto relative">
     <div class="relative">
-      <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/></svg>
+      <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/></svg>
       <input
         type="text"
         x-model="searchQuery"
         @focus="searchFocus = true"
         @blur="setTimeout(() => searchFocus = false, 200)"
-        placeholder="搜索文档、Skills、报告… (支持语义搜索)"
-        class="w-full bg-gray-50 border border-transparent focus:bg-white focus:border-blue-400 outline-none rounded-lg pl-10 pr-4 py-2 text-sm transition" />
+        placeholder="搜索文档、Skills、报告…"
+        class="w-full bg-zinc-100 border border-transparent focus:bg-white focus:border-zinc-300 outline-none rounded-lg pl-10 pr-4 py-1.5 text-sm transition" />
+      <kbd class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-zinc-400 font-mono px-1.5 py-0.5 bg-white border border-zinc-200 rounded">⌘ F</kbd>
     </div>
     <!-- 搜索下拉 -->
     <div x-show="searchFocus && searchQuery.length > 0" x-transition
-         class="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-2 max-h-96 overflow-auto">
-      <div class="px-3 py-1 text-xs text-gray-400">语义搜索结果（mock）</div>
+         class="absolute top-full left-0 right-0 mt-1.5 bg-white rounded-lg border border-zinc-200 py-2 max-h-96 overflow-auto" style="box-shadow: 0 8px 24px rgba(0,0,0,0.06);">
+      <div class="px-3 py-1 text-[10px] text-zinc-400 uppercase tracking-wide">语义搜索结果</div>
       <template x-for="r in searchResults" :key="r.id">
         <div @click="goToDoc(r.moduleId, r.id); searchQuery=''"
-             class="px-3 py-2 hover:bg-blue-50 cursor-pointer">
-          <div class="text-sm text-gray-800" x-text="r.title"></div>
-          <div class="text-xs text-gray-400 mt-0.5" x-text="r.snippet"></div>
+             class="px-3 py-2 hover:bg-zinc-50 cursor-pointer">
+          <div class="text-sm text-zinc-900" x-text="r.title"></div>
+          <div class="text-xs text-zinc-400 mt-0.5" x-text="r.snippet"></div>
         </div>
       </template>
-      <div x-show="searchResults.length === 0" class="px-3 py-2 text-sm text-gray-400">无匹配结果，试试问 AI 助手 →</div>
+      <div x-show="searchResults.length === 0" class="px-3 py-2 text-sm text-zinc-400">无匹配结果，试试问 AI 助手 →</div>
     </div>
   </div>
 
   <!-- 用户区 -->
-  <div class="flex items-center gap-3 text-sm">
-    <!-- 知识图谱入口 -->
+  <div class="flex items-center gap-2 text-sm">
+    <!-- 知识图谱入口（次按钮） -->
     <button @click="openGraph()"
-            class="px-3 py-1.5 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg text-sm font-medium transition flex items-center gap-1 shadow-sm"
-            title="知识图谱 — Obsidian 风格力导向图">
-      <span>🕸</span>
+            class="px-3 py-1.5 bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 rounded-lg text-sm font-medium transition flex items-center gap-1.5"
+            title="知识图谱">
+      <span class="text-sm">🕸</span>
       <span>图谱</span>
     </button>
-    <!-- 团队贡献入口 -->
+    <!-- 团队贡献入口（主按钮：黑色） -->
     <button @click="openContribute()"
-            class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition flex items-center gap-1 shadow-sm"
+            class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg text-sm font-medium transition flex items-center gap-1.5"
             title="新建文档 / 上传文件 / 贡献到知识库">
       <span class="text-base leading-none">＋</span>
       <span>贡献</span>
     </button>
-    <button class="text-gray-500 hover:text-gray-800" title="通知">🔔</button>
-    <div class="flex items-center gap-2">
-      <div class="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-pink-500 flex items-center justify-center text-white font-medium text-xs">财</div>
-      <span class="text-gray-700">财务 Leader</span>
+    <button class="text-zinc-400 hover:text-zinc-700 ml-1" title="通知">🔔</button>
+    <div class="flex items-center gap-2 ml-2 pl-3 border-l border-zinc-200">
+      <div class="w-7 h-7 rounded-full bg-zinc-900 flex items-center justify-center text-white font-medium text-[11px]">财</div>
+      <span class="text-zinc-700 text-sm">财务 Leader</span>
     </div>
   </div>
 </header>
@@ -119,35 +124,35 @@
 <div class="flex" style="height: calc(100vh - 3.5rem);">
 
   <!-- ========== 左栏：模块树 ========== -->
-  <aside class="w-72 bg-white border-r border-gray-200 overflow-y-auto py-3">
-    <div class="px-4 mb-2 text-xs text-gray-400 uppercase tracking-wide">知识库目录</div>
+  <aside class="w-72 bg-white border-r border-zinc-200 overflow-y-auto py-4">
+    <div class="px-4 mb-3 text-[10px] text-zinc-400 uppercase tracking-wider font-medium">知识库目录</div>
     <template x-for="m in modules" :key="m.id">
       <div>
         <!-- 模块行 -->
         <div @click="selectModule(m.id)"
-             class="mx-2 px-3 py-2 rounded-lg flex items-center gap-2 cursor-pointer transition"
-             :class="currentModuleId === m.id ? 'bg-blue-50 text-blue-700' : 'hover:bg-gray-50 text-gray-700'">
-          <span class="text-base" x-text="m.icon"></span>
-          <span class="text-xs text-gray-400 font-mono" x-text="m.num"></span>
-          <span class="text-sm font-medium flex-1" x-text="m.name"></span>
-          <span x-show="m.highlight" class="text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded">高光</span>
+             class="mx-2 px-2.5 py-1.5 rounded-md flex items-center gap-2 cursor-pointer transition"
+             :class="currentModuleId === m.id ? 'bg-zinc-100 text-zinc-900' : 'hover:bg-zinc-50 text-zinc-600'">
+          <span class="text-sm" x-text="m.icon"></span>
+          <span class="text-[10px] text-zinc-400 font-mono" x-text="m.num"></span>
+          <span class="text-sm font-medium flex-1 tracking-tight" x-text="m.name"></span>
+          <span x-show="m.highlight" class="text-[9px] px-1.5 py-0.5 bg-zinc-900 text-white rounded font-medium tracking-wide">●</span>
         </div>
         <!-- 子文档 -->
-        <div x-show="currentModuleId === m.id && moduleDocs[m.id]" class="ml-10 mt-1 mb-2 space-y-0.5">
+        <div x-show="currentModuleId === m.id && moduleDocs[m.id]" class="ml-9 mt-0.5 mb-2 space-y-0.5">
           <template x-for="d in (moduleDocs[m.id] || [])" :key="d.id">
             <div @click.stop="selectDoc(d.id)"
                  class="px-2 py-1 rounded text-xs cursor-pointer transition"
-                 :class="currentDocId === d.id ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-gray-50'"
+                 :class="currentDocId === d.id ? 'bg-zinc-100 text-zinc-900 font-medium' : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-700'"
                  x-text="d.title"></div>
           </template>
         </div>
       </div>
     </template>
     <!-- 演进路线提示 -->
-    <div class="mx-4 mt-6 p-3 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg text-xs text-gray-600 border border-blue-100">
-      <div class="font-semibold text-blue-700 mb-1">📍 演进路线</div>
-      <div>M1 骨架 → M2 RAG → M3 自动报告 → M4 Skills → M5 自建 Web</div>
-      <div class="mt-1 text-gray-400">见 ARCHITECTURE.md</div>
+    <div class="mx-3 mt-6 p-3 bg-zinc-50 rounded-lg text-xs text-zinc-600 border border-zinc-200">
+      <div class="font-semibold text-zinc-900 mb-1 text-[11px] uppercase tracking-wide">演进路线</div>
+      <div class="leading-relaxed">M1 骨架 → M2 RAG → M3 自动报告 → M4 Skills → M5 自建 Web</div>
+      <div class="mt-1.5 text-zinc-400 text-[10px]">详见 ARCHITECTURE.md</div>
     </div>
   </aside>
 
@@ -156,33 +161,39 @@
 
     <!-- ----- 首屏 Home ----- -->
     <template x-if="currentModuleId === 'home'">
-      <div class="max-w-5xl mx-auto px-8 py-8">
-        <div class="text-xs text-blue-600 mb-2">🏠 团队主页</div>
-        <h1 class="text-3xl font-bold text-gray-800 mb-2" x-text="team.name + ' · 团队第二大脑'"></h1>
-        <p class="text-gray-600 mb-1" x-text="'团队规模 ' + team.members + ' 人 · ' + team.stage"></p>
-        <p class="text-gray-500 leading-relaxed mb-8 max-w-3xl" x-text="team.welcome"></p>
+      <div class="max-w-5xl mx-auto px-10 py-10">
+        <div class="text-[11px] text-zinc-400 mb-3 uppercase tracking-wider font-medium">团队主页 / Team Overview</div>
+        <h1 class="display-title mb-3" x-text="team.name + ' · 团队第二大脑'"></h1>
+        <p class="text-zinc-500 text-sm mb-2" x-text="'团队规模 ' + team.members + ' 人 · ' + team.stage"></p>
+        <p class="text-zinc-600 leading-relaxed mb-10 max-w-2xl" x-text="team.welcome"></p>
 
         <!-- 当周关注 -->
-        <div class="mb-8">
-          <h3 class="text-sm font-semibold text-gray-700 mb-3">⚡ 当周关注</h3>
-          <div class="grid grid-cols-3 gap-4">
+        <div class="mb-10">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-semibold text-zinc-900 tracking-tight">当周关注</h3>
+            <span class="text-[10px] text-zinc-400 uppercase tracking-wider">Week Focus</span>
+          </div>
+          <div class="grid grid-cols-3 gap-3">
             <template x-for="f in team.weekFocus" :key="f.text">
-              <div class="bg-white rounded-lg p-4 border border-gray-200">
-                <div class="text-xs text-blue-600 font-semibold mb-2" x-text="'# ' + f.tag"></div>
-                <div class="text-sm text-gray-700 leading-relaxed" x-text="f.text"></div>
+              <div class="bg-white rounded-xl p-5 border border-zinc-200">
+                <div class="inline-block text-[10px] font-medium text-zinc-600 mb-3 px-2 py-0.5 bg-zinc-100 rounded uppercase tracking-wide" x-text="f.tag"></div>
+                <div class="text-sm text-zinc-700 leading-relaxed" x-text="f.text"></div>
               </div>
             </template>
           </div>
         </div>
 
         <!-- OKR -->
-        <div class="mb-8">
-          <h3 class="text-sm font-semibold text-gray-700 mb-3">🎯 本季度 OKR</h3>
-          <div class="bg-white rounded-lg border border-gray-200 divide-y divide-gray-100">
+        <div class="mb-10">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-semibold text-zinc-900 tracking-tight">本季度 OKR</h3>
+            <span class="text-[10px] text-zinc-400 uppercase tracking-wider">Q2 Objectives</span>
+          </div>
+          <div class="bg-white rounded-xl border border-zinc-200 divide-y divide-zinc-100">
             <template x-for="o in team.okr" :key="o.kr">
-              <div class="px-4 py-3 flex items-start gap-3">
-                <div class="px-2 py-0.5 bg-purple-100 text-purple-700 rounded text-xs font-mono shrink-0" x-text="o.kr"></div>
-                <div class="text-sm text-gray-700" x-text="o.text"></div>
+              <div class="px-5 py-3.5 flex items-start gap-4">
+                <div class="px-2 py-0.5 bg-zinc-900 text-white rounded text-[10px] font-mono shrink-0 mt-0.5 tracking-wide" x-text="o.kr"></div>
+                <div class="text-sm text-zinc-700 leading-relaxed" x-text="o.text"></div>
               </div>
             </template>
           </div>
@@ -190,16 +201,23 @@
 
         <!-- 高光模块快捷入口 -->
         <div>
-          <h3 class="text-sm font-semibold text-gray-700 mb-3">🌟 重点模块</h3>
-          <div class="grid grid-cols-2 gap-4">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-semibold text-zinc-900 tracking-tight">重点模块</h3>
+            <span class="text-[10px] text-zinc-400 uppercase tracking-wider">Highlights</span>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
             <template x-for="m in modules.filter(x => x.highlight && x.id !== 'home')" :key="m.id">
               <div @click="selectModule(m.id)"
-                   class="bg-white rounded-lg p-5 border border-gray-200 hover:border-blue-400 hover:shadow-md cursor-pointer transition group">
-                <div class="flex items-center gap-3 mb-2">
-                  <span class="text-2xl" x-text="m.icon"></span>
-                  <span class="font-semibold text-gray-800 group-hover:text-blue-700" x-text="m.name"></span>
+                   class="bg-white rounded-xl p-5 border border-zinc-200 hover:border-zinc-400 cursor-pointer transition group">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <span class="text-xl" x-text="m.icon"></span>
+                    <span class="text-[11px] text-zinc-400 font-mono" x-text="m.num"></span>
+                  </div>
+                  <span class="text-zinc-300 group-hover:text-zinc-900 transition">→</span>
                 </div>
-                <div class="text-sm text-gray-500" x-text="m.desc"></div>
+                <div class="font-semibold text-zinc-900 mb-1 tracking-tight" x-text="m.name"></div>
+                <div class="text-sm text-zinc-500 leading-relaxed" x-text="m.desc"></div>
               </div>
             </template>
           </div>
@@ -209,29 +227,30 @@
 
     <!-- ----- 文档浏览（operations / knowledge / templates / projects） ----- -->
     <template x-if="['operations','knowledge','templates','projects'].includes(currentModuleId)">
-      <div class="max-w-4xl mx-auto px-8 py-8">
+      <div class="max-w-4xl mx-auto px-10 py-10">
         <!-- 模块头 -->
         <template x-if="!currentDocId">
           <div>
-            <div class="text-xs text-blue-600 mb-2" x-text="getModule(currentModuleId).num + ' · ' + getModule(currentModuleId).name"></div>
-            <h1 class="text-3xl font-bold text-gray-800 mb-2" x-text="getModule(currentModuleId).name"></h1>
-            <p class="text-gray-500 mb-6" x-text="getModule(currentModuleId).desc"></p>
+            <div class="text-[11px] text-zinc-400 mb-3 uppercase tracking-wider font-medium" x-text="getModule(currentModuleId).num + ' · ' + getModule(currentModuleId).name"></div>
+            <h1 class="display-title mb-3" x-text="getModule(currentModuleId).name"></h1>
+            <p class="text-zinc-500 mb-8" x-text="getModule(currentModuleId).desc"></p>
             <div class="space-y-2">
               <template x-for="d in (moduleDocs[currentModuleId] || [])" :key="d.id">
                 <div @click="selectDoc(d.id)"
-                     class="bg-white p-4 rounded-lg border border-gray-200 hover:border-blue-400 cursor-pointer transition flex items-center gap-3">
-                  <span class="text-xl">📄</span>
-                  <div class="flex-1">
-                    <div class="font-medium text-gray-800" x-text="d.title"></div>
-                    <div class="text-xs text-gray-400 mt-0.5" x-text="docs[d.id]?.meta?.tags?.join(' · ')"></div>
+                     class="bg-white px-5 py-4 rounded-xl border border-zinc-200 hover:border-zinc-400 cursor-pointer transition flex items-center gap-4 group">
+                  <span class="text-lg text-zinc-400">📄</span>
+                  <div class="flex-1 min-w-0">
+                    <div class="font-medium text-zinc-900 tracking-tight" x-text="d.title"></div>
+                    <div class="text-xs text-zinc-400 mt-1" x-text="docs[d.id]?.meta?.tags?.join(' · ')"></div>
                   </div>
-                  <span class="text-xs text-gray-400" x-text="docs[d.id]?.meta?.updated"></span>
+                  <span class="text-xs text-zinc-400 font-mono shrink-0" x-text="docs[d.id]?.meta?.updated"></span>
+                  <span class="text-zinc-300 group-hover:text-zinc-900 transition">→</span>
                 </div>
               </template>
               <!-- 团队成员贡献入口（卡片式） -->
               <div @click="openContributeForModule(currentModuleId)"
-                   class="p-4 rounded-lg border-2 border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50 cursor-pointer transition flex items-center justify-center gap-2 text-gray-500 hover:text-blue-700">
-                <span class="text-lg">＋</span>
+                   class="px-5 py-4 rounded-xl border border-dashed border-zinc-300 hover:border-zinc-500 hover:bg-white cursor-pointer transition flex items-center justify-center gap-2 text-zinc-500 hover:text-zinc-900">
+                <span class="text-base">＋</span>
                 <span class="text-sm">新建文档（贡献到本模块）</span>
               </div>
             </div>
@@ -242,25 +261,25 @@
         <template x-if="currentDocId && docs[currentDocId]">
           <article>
             <!-- frontmatter 元信息 -->
-            <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6 text-sm">
-              <div class="text-xs text-blue-600 mb-2 font-semibold">📋 文档元信息（Karpathy LLM Wiki frontmatter）</div>
-              <div class="grid grid-cols-4 gap-2 text-xs text-gray-600">
-                <div><span class="text-gray-400">作者：</span><span x-text="docs[currentDocId].meta.owner"></span></div>
-                <div><span class="text-gray-400">更新：</span><span x-text="docs[currentDocId].meta.updated"></span></div>
-                <div><span class="text-gray-400">版本：</span><span x-text="'v' + docs[currentDocId].meta.version"></span></div>
-                <div><span class="text-gray-400">标签：</span><span x-text="docs[currentDocId].meta.tags.join('、')"></span></div>
+            <div class="bg-white border border-zinc-200 rounded-xl p-4 mb-8">
+              <div class="text-[10px] text-zinc-400 mb-3 font-medium uppercase tracking-wider">Frontmatter · Karpathy LLM Wiki</div>
+              <div class="grid grid-cols-4 gap-3 text-xs">
+                <div><div class="text-zinc-400 mb-0.5">作者</div><div class="text-zinc-900 font-medium" x-text="docs[currentDocId].meta.owner"></div></div>
+                <div><div class="text-zinc-400 mb-0.5">更新</div><div class="text-zinc-900 font-mono" x-text="docs[currentDocId].meta.updated"></div></div>
+                <div><div class="text-zinc-400 mb-0.5">版本</div><div class="text-zinc-900 font-mono" x-text="'v' + docs[currentDocId].meta.version"></div></div>
+                <div><div class="text-zinc-400 mb-0.5">标签</div><div class="text-zinc-900 truncate" x-text="docs[currentDocId].meta.tags.join('、')"></div></div>
               </div>
             </div>
 
             <div class="flex items-start justify-between mb-6 gap-4">
-              <h1 class="text-3xl font-bold text-gray-800 flex-1" x-text="docs[currentDocId].meta.title"></h1>
-              <div class="flex gap-2 shrink-0">
+              <h1 class="display-title flex-1" x-text="docs[currentDocId].meta.title"></h1>
+              <div class="flex gap-2 shrink-0 mt-2">
                 <button @click="editCurrentDoc()"
-                        class="px-3 py-1.5 bg-white border border-gray-200 hover:border-blue-400 hover:text-blue-700 rounded-lg text-xs font-medium transition flex items-center gap-1">
+                        class="px-3 py-1.5 bg-white border border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300 text-zinc-700 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
                   <span>✏️</span> 编辑
                 </button>
                 <button @click="showToast('版本历史：v' + docs[currentDocId].meta.version + ' 当前；v' + (parseFloat(docs[currentDocId].meta.version) - 0.1).toFixed(1) + ' 等历史版本将在弹层展示（mock）')"
-                        class="px-3 py-1.5 bg-white border border-gray-200 hover:border-blue-400 hover:text-blue-700 rounded-lg text-xs font-medium transition flex items-center gap-1">
+                        class="px-3 py-1.5 bg-white border border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300 text-zinc-700 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
                   <span>🕓</span> 历史
                 </button>
               </div>
@@ -270,12 +289,12 @@
             <div class="prose-doc" x-html="renderMd(docs[currentDocId].body)"></div>
 
             <!-- 反向链接 -->
-            <div class="mt-8 pt-6 border-t border-gray-200">
-              <div class="text-xs text-gray-400 mb-2">🔗 关联文档</div>
+            <div class="mt-10 pt-6 border-t border-zinc-200">
+              <div class="text-[10px] text-zinc-400 mb-3 uppercase tracking-wider font-medium">关联文档 · Backlinks</div>
               <div class="flex flex-wrap gap-2">
                 <template x-for="rid in (docs[currentDocId].meta.related || [])" :key="rid">
                   <button @click="selectDoc(rid)"
-                          class="text-xs px-3 py-1 bg-gray-100 hover:bg-blue-100 hover:text-blue-700 rounded-full transition"
+                          class="text-xs px-3 py-1.5 bg-white border border-zinc-200 hover:border-zinc-400 text-zinc-700 rounded-md transition"
                           x-text="docs[rid]?.meta?.title || rid"></button>
                 </template>
               </div>
@@ -287,52 +306,55 @@
 
     <!-- ----- 数据中心 ----- -->
     <template x-if="currentModuleId === 'datahub'">
-      <div class="max-w-5xl mx-auto px-8 py-8">
-        <div class="text-xs text-blue-600 mb-2">📊 05 · 数据中心</div>
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">关键指标总览</h1>
-        <p class="text-gray-500 mb-6">数据来自 ERP / 银行 / 多维表格，每小时刷新一次。月报、AI 助手都基于此数据回答。</p>
+      <div class="max-w-5xl mx-auto px-10 py-10">
+        <div class="text-[11px] text-zinc-400 mb-3 uppercase tracking-wider font-medium">05 · 数据中心 / Data Hub</div>
+        <h1 class="display-title mb-3">关键指标总览</h1>
+        <p class="text-zinc-500 mb-8">数据来自 ERP / 银行 / 多维表格，每小时刷新一次。月报、AI 助手都基于此数据回答。</p>
 
-        <div class="grid grid-cols-4 gap-4 mb-8">
+        <div class="grid grid-cols-4 gap-3 mb-6">
           <template x-for="k in kpis.cards" :key="k.label">
-            <div class="bg-white rounded-lg p-4 border border-gray-200">
-              <div class="text-xs text-gray-400 mb-1" x-text="k.label"></div>
-              <div class="text-2xl font-bold text-gray-800 mb-1" x-text="k.value"></div>
-              <div class="text-xs"
-                   :class="k.changeType === 'up' ? 'text-green-600' : k.changeType === 'down' ? 'text-blue-600' : 'text-amber-600'"
+            <div class="bg-white rounded-xl p-5 border border-zinc-200">
+              <div class="text-[10px] text-zinc-400 mb-2 uppercase tracking-wider font-medium" x-text="k.label"></div>
+              <div class="text-2xl font-semibold text-zinc-900 mb-1.5 tracking-tight" x-text="k.value"></div>
+              <div class="text-xs font-mono"
+                   :class="k.changeType === 'up' ? 'text-emerald-600' : k.changeType === 'down' ? 'text-zinc-600' : 'text-amber-600'"
                    x-text="k.change"></div>
             </div>
           </template>
         </div>
 
-        <div class="bg-white rounded-lg border border-gray-200 p-4">
-          <div class="text-sm font-semibold text-gray-700 mb-2">收入趋势：实际 vs 预算（近 6 个月，单位 ¥M）</div>
+        <div class="bg-white rounded-xl border border-zinc-200 p-5">
+          <div class="flex items-center justify-between mb-3">
+            <div class="text-sm font-semibold text-zinc-900 tracking-tight">收入趋势：实际 vs 预算</div>
+            <div class="text-[10px] text-zinc-400 uppercase tracking-wider">近 6 个月 · 单位 ¥M</div>
+          </div>
           <div id="revenue-chart" style="height: 320px;"></div>
         </div>
 
-        <div class="mt-6 text-xs text-gray-400 italic">
-          💡 接入扩展性：当前数据为 mock，生产环境通过 <code class="text-gray-600">DataSources.fetchKPIs()</code> 拉取（详见 integrations.js）
+        <div class="mt-6 text-xs text-zinc-400">
+          接入扩展性：当前数据为 mock，生产环境通过 <code class="text-zinc-700 bg-zinc-100 px-1.5 py-0.5 rounded">DataSources.fetchKPIs()</code> 拉取（详见 <code class="text-zinc-700 bg-zinc-100 px-1.5 py-0.5 rounded">integrations.js</code>）
         </div>
       </div>
     </template>
 
     <!-- ----- 报告中心（高光交互） ----- -->
     <template x-if="currentModuleId === 'reports'">
-      <div class="max-w-4xl mx-auto px-8 py-8">
-        <div class="text-xs text-blue-600 mb-2">📈 06 · 报告中心</div>
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">报告中心</h1>
-        <p class="text-gray-500 mb-6">定时任务从数据中心拉数据 → LLM 套模板生成 → 财务复核 → 推送飞书。把 leader 周末写报告的时间从 8 小时压到 1 小时。</p>
+      <div class="max-w-4xl mx-auto px-10 py-10">
+        <div class="text-[11px] text-zinc-400 mb-3 uppercase tracking-wider font-medium">06 · 报告中心 / Reports</div>
+        <h1 class="display-title mb-3">报告中心</h1>
+        <p class="text-zinc-500 mb-8 max-w-2xl">定时任务从数据中心拉数据 → LLM 套模板生成 → 财务复核 → 推送飞书。把 leader 周末写报告的时间从 8 小时压到 1 小时。</p>
 
         <!-- 月报生成器 -->
-        <div class="bg-gradient-to-br from-blue-50 to-purple-50 border border-blue-200 rounded-xl p-6 mb-6">
-          <div class="flex items-start justify-between mb-4">
-            <div>
-              <div class="text-xs text-blue-700 font-semibold mb-1">🌟 高光交互</div>
-              <h3 class="text-xl font-bold text-gray-800">2026 年 4 月经营月报</h3>
-              <p class="text-sm text-gray-500 mt-1">基于 Data Hub 实时数据 + LLM 经营分析</p>
+        <div class="bg-white border border-zinc-200 rounded-xl p-6 mb-6">
+          <div class="flex items-start justify-between mb-4 gap-4">
+            <div class="flex-1">
+              <div class="text-[10px] text-zinc-400 mb-2 uppercase tracking-wider font-medium">Featured Action</div>
+              <h3 class="text-xl font-semibold text-zinc-900 tracking-tight">2026 年 4 月经营月报</h3>
+              <p class="text-sm text-zinc-500 mt-1.5">基于 Data Hub 实时数据 + LLM 经营分析</p>
             </div>
             <button @click="generateReport()"
                     :disabled="reportGenerating"
-                    class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-sm transition disabled:opacity-50 disabled:cursor-not-allowed pulse-blue">
+                    class="px-4 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg font-medium text-sm transition disabled:opacity-50 disabled:cursor-not-allowed pulse-dark shrink-0">
               <span x-show="!reportGenerating">⚡ 一键生成月报</span>
               <span x-show="reportGenerating" x-text="reportProgressLabel"></span>
             </button>
@@ -340,49 +362,49 @@
 
           <!-- 进度条 -->
           <div x-show="reportGenerating" class="mt-4">
-            <div class="h-2 bg-blue-100 rounded-full overflow-hidden">
-              <div class="h-full bg-blue-600 transition-all duration-300" :style="'width: ' + reportProgress + '%'"></div>
+            <div class="h-1 bg-zinc-100 rounded-full overflow-hidden">
+              <div class="h-full bg-zinc-900 transition-all duration-300" :style="'width: ' + reportProgress + '%'"></div>
             </div>
           </div>
         </div>
 
         <!-- 报告输出区 -->
         <template x-if="reportData">
-          <div class="bg-white rounded-xl border border-gray-200 p-8">
-            <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
-              <div>
-                <h2 class="text-2xl font-bold text-gray-800" x-text="reportData.title"></h2>
-                <div class="text-xs text-gray-400 mt-1" x-text="'生成时间：' + reportData.generatedAt + ' · 由 monthly-report skill 自动生成'"></div>
+          <div class="bg-white rounded-xl border border-zinc-200 p-8">
+            <div class="flex items-start justify-between mb-6 pb-5 border-b border-zinc-200 gap-4">
+              <div class="flex-1">
+                <h2 class="text-2xl font-semibold text-zinc-900 tracking-tight" x-text="reportData.title"></h2>
+                <div class="text-xs text-zinc-400 mt-1.5" x-text="'生成时间 ' + reportData.generatedAt + ' · 由 monthly-report skill 自动生成'"></div>
               </div>
               <button @click="pushToFeishu()"
-                      class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition flex items-center gap-2">
+                      class="px-3.5 py-2 bg-white border border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300 text-zinc-900 rounded-lg text-sm font-medium transition flex items-center gap-1.5 shrink-0">
                 <span>💬</span> 推送到飞书
               </button>
             </div>
 
-            <div class="bg-blue-50 rounded-lg p-4 mb-6 border-l-4 border-blue-500">
-              <div class="text-xs text-blue-700 font-semibold mb-1">摘要</div>
-              <div class="text-sm text-gray-700 leading-relaxed" x-text="reportData.summary"></div>
+            <div class="bg-zinc-50 rounded-lg p-4 mb-6 border-l-2 border-zinc-900">
+              <div class="text-[10px] text-zinc-500 font-medium mb-1.5 uppercase tracking-wider">Summary</div>
+              <div class="text-sm text-zinc-700 leading-relaxed" x-text="reportData.summary"></div>
             </div>
 
             <!-- KPI 表格 -->
-            <h3 class="text-lg font-semibold text-gray-800 mb-3">📊 核心 KPI</h3>
-            <table class="w-full mb-6 text-sm">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="border border-gray-200 px-3 py-2 text-left">指标</th>
-                  <th class="border border-gray-200 px-3 py-2 text-left">当月值</th>
-                  <th class="border border-gray-200 px-3 py-2 text-left">环比</th>
-                  <th class="border border-gray-200 px-3 py-2 text-left">同比</th>
+            <h3 class="text-base font-semibold text-zinc-900 mb-3 tracking-tight">核心 KPI</h3>
+            <table class="w-full mb-8 text-sm border border-zinc-200 rounded overflow-hidden">
+              <thead>
+                <tr class="bg-zinc-50">
+                  <th class="px-3 py-2.5 text-left text-[11px] font-medium text-zinc-500 uppercase tracking-wider border-b border-zinc-200">指标</th>
+                  <th class="px-3 py-2.5 text-left text-[11px] font-medium text-zinc-500 uppercase tracking-wider border-b border-zinc-200">当月值</th>
+                  <th class="px-3 py-2.5 text-left text-[11px] font-medium text-zinc-500 uppercase tracking-wider border-b border-zinc-200">环比</th>
+                  <th class="px-3 py-2.5 text-left text-[11px] font-medium text-zinc-500 uppercase tracking-wider border-b border-zinc-200">同比</th>
                 </tr>
               </thead>
               <tbody>
                 <template x-for="k in reportData.kpis" :key="k.name">
-                  <tr>
-                    <td class="border border-gray-200 px-3 py-2 font-medium" x-text="k.name"></td>
-                    <td class="border border-gray-200 px-3 py-2 font-mono" x-text="k.v"></td>
-                    <td class="border border-gray-200 px-3 py-2" x-text="k.mom"></td>
-                    <td class="border border-gray-200 px-3 py-2" x-text="k.yoy"></td>
+                  <tr class="border-t border-zinc-100">
+                    <td class="px-3 py-2.5 font-medium text-zinc-900" x-text="k.name"></td>
+                    <td class="px-3 py-2.5 font-mono text-zinc-900" x-text="k.v"></td>
+                    <td class="px-3 py-2.5 font-mono text-zinc-600" x-text="k.mom"></td>
+                    <td class="px-3 py-2.5 font-mono text-zinc-600" x-text="k.yoy"></td>
                   </tr>
                 </template>
               </tbody>
@@ -390,25 +412,29 @@
 
             <!-- 各章节 -->
             <template x-for="s in reportData.sections" :key="s.title">
-              <div class="mb-5">
-                <h3 class="text-lg font-semibold text-gray-800 mb-2" x-text="s.title"></h3>
-                <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line" x-text="s.body"></p>
+              <div class="mb-6">
+                <h3 class="text-base font-semibold text-zinc-900 mb-2 tracking-tight" x-text="s.title"></h3>
+                <p class="text-sm text-zinc-700 leading-relaxed whitespace-pre-line" x-text="s.body"></p>
               </div>
             </template>
           </div>
         </template>
 
         <!-- 历史报告 -->
-        <div x-show="!reportData" class="mt-6">
-          <h3 class="text-sm font-semibold text-gray-700 mb-3">📚 历史报告</h3>
-          <div class="bg-white rounded-lg border border-gray-200 divide-y divide-gray-100">
+        <div x-show="!reportData" class="mt-8">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-semibold text-zinc-900 tracking-tight">历史报告</h3>
+            <span class="text-[10px] text-zinc-400 uppercase tracking-wider">Archive</span>
+          </div>
+          <div class="bg-white rounded-xl border border-zinc-200 divide-y divide-zinc-100">
             <template x-for="r in archiveReports" :key="r.title">
-              <div class="px-4 py-3 flex items-center gap-3 hover:bg-gray-50 cursor-pointer">
-                <span>📄</span>
+              <div class="px-5 py-3.5 flex items-center gap-4 hover:bg-zinc-50 cursor-pointer transition">
+                <span class="text-zinc-400">📄</span>
                 <div class="flex-1">
-                  <div class="text-sm font-medium text-gray-800" x-text="r.title"></div>
-                  <div class="text-xs text-gray-400" x-text="r.date + ' · ' + r.author"></div>
+                  <div class="text-sm font-medium text-zinc-900" x-text="r.title"></div>
+                  <div class="text-xs text-zinc-400 mt-0.5" x-text="r.date + ' · ' + r.author"></div>
                 </div>
+                <span class="text-zinc-300">→</span>
               </div>
             </template>
           </div>
@@ -418,55 +444,58 @@
 
     <!-- ----- Skills 工坊（高光交互） ----- -->
     <template x-if="currentModuleId === 'skills'">
-      <div class="max-w-5xl mx-auto px-8 py-8">
-        <div class="flex items-start justify-between mb-6">
-          <div>
-            <div class="text-xs text-blue-600 mb-2">🛠️ 07 · Skills 工坊</div>
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">团队共享能力空间</h1>
-            <p class="text-gray-500 max-w-2xl">每个人解决过一次的问题，沉淀成可复用 skill，全团队调用。参考 Anthropic Skills + superpowers 模式。</p>
+      <div class="max-w-5xl mx-auto px-10 py-10">
+        <div class="flex items-start justify-between mb-8 gap-6">
+          <div class="flex-1">
+            <div class="text-[11px] text-zinc-400 mb-3 uppercase tracking-wider font-medium">07 · Skills 工坊 / Workshop</div>
+            <h1 class="display-title mb-3">团队共享能力空间</h1>
+            <p class="text-zinc-500 max-w-2xl">每个人解决过一次的问题，沉淀成可复用 skill，全团队调用。参考 Anthropic Skills + superpowers 模式。</p>
           </div>
           <button @click="showDraftSkill = true"
-                  class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition flex items-center gap-2 shrink-0">
+                  class="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg text-sm font-medium transition flex items-center gap-2 shrink-0 mt-2">
             <span>✨</span> 在线生成 Skill
           </button>
         </div>
 
         <!-- skill 网格 -->
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-2 gap-3">
           <template x-for="s in skills" :key="s.id">
             <div @click="selectedSkill = s"
-                 class="bg-white rounded-lg p-5 border border-gray-200 hover:border-blue-400 hover:shadow cursor-pointer transition">
-              <div class="flex items-start justify-between mb-2">
-                <div>
-                  <div class="font-semibold text-gray-800" x-text="s.title"></div>
-                  <div class="text-xs text-gray-400 font-mono mt-0.5" x-text="s.name"></div>
+                 class="bg-white rounded-xl p-5 border border-zinc-200 hover:border-zinc-400 cursor-pointer transition group">
+              <div class="flex items-start justify-between mb-2.5 gap-2">
+                <div class="flex-1 min-w-0">
+                  <div class="font-semibold text-zinc-900 tracking-tight" x-text="s.title"></div>
+                  <div class="text-[11px] text-zinc-400 font-mono mt-1" x-text="s.name"></div>
                 </div>
-                <span class="text-[10px] px-2 py-0.5 rounded-full"
-                      :class="s.status === 'stable' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'"
+                <span class="text-[10px] px-2 py-0.5 rounded-full font-medium shrink-0"
+                      :class="s.status === 'stable' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-amber-50 text-amber-700 border border-amber-100'"
                       x-text="s.status"></span>
               </div>
-              <p class="text-sm text-gray-600 mb-3 leading-relaxed" x-text="s.desc"></p>
-              <div class="flex items-center justify-between text-xs text-gray-400">
-                <span>👤 <span x-text="s.contributor"></span> · 📁 <span x-text="s.domain"></span></span>
-                <span>📞 <span x-text="s.calls"></span> 次调用</span>
+              <p class="text-sm text-zinc-600 mb-4 leading-relaxed line-clamp-2" x-text="s.desc"></p>
+              <div class="flex items-center justify-between text-[11px] text-zinc-400 pt-3 border-t border-zinc-100">
+                <span><span x-text="s.contributor"></span> · <span x-text="s.domain"></span></span>
+                <span><span class="font-mono text-zinc-700" x-text="s.calls"></span> 调用</span>
               </div>
             </div>
           </template>
         </div>
 
         <!-- 贡献流程图 -->
-        <div class="mt-8 bg-white rounded-lg border border-gray-200 p-5">
-          <h3 class="text-sm font-semibold text-gray-700 mb-3">🔄 贡献流程</h3>
+        <div class="mt-10 bg-white rounded-xl border border-zinc-200 p-6">
+          <div class="flex items-center justify-between mb-5">
+            <h3 class="text-sm font-semibold text-zinc-900 tracking-tight">贡献流程</h3>
+            <span class="text-[10px] text-zinc-400 uppercase tracking-wider">Contribution Flow</span>
+          </div>
           <div class="flex items-center justify-between text-sm">
-            <div class="text-center flex-1"><div class="w-10 h-10 mx-auto bg-blue-50 text-blue-700 rounded-full flex items-center justify-center font-bold mb-1">1</div>提案</div>
-            <div class="text-gray-300">→</div>
-            <div class="text-center flex-1"><div class="w-10 h-10 mx-auto bg-blue-50 text-blue-700 rounded-full flex items-center justify-center font-bold mb-1">2</div>起草</div>
-            <div class="text-gray-300">→</div>
-            <div class="text-center flex-1"><div class="w-10 h-10 mx-auto bg-blue-50 text-blue-700 rounded-full flex items-center justify-center font-bold mb-1">3</div>评审</div>
-            <div class="text-gray-300">→</div>
-            <div class="text-center flex-1"><div class="w-10 h-10 mx-auto bg-blue-50 text-blue-700 rounded-full flex items-center justify-center font-bold mb-1">4</div>上线</div>
-            <div class="text-gray-300">→</div>
-            <div class="text-center flex-1"><div class="w-10 h-10 mx-auto bg-blue-50 text-blue-700 rounded-full flex items-center justify-center font-bold mb-1">5</div>统计</div>
+            <div class="text-center flex-1"><div class="w-9 h-9 mx-auto bg-zinc-900 text-white rounded-full flex items-center justify-center font-semibold mb-2 text-sm">1</div><span class="text-zinc-700">提案</span></div>
+            <div class="text-zinc-300 px-2">—</div>
+            <div class="text-center flex-1"><div class="w-9 h-9 mx-auto bg-zinc-900 text-white rounded-full flex items-center justify-center font-semibold mb-2 text-sm">2</div><span class="text-zinc-700">起草</span></div>
+            <div class="text-zinc-300 px-2">—</div>
+            <div class="text-center flex-1"><div class="w-9 h-9 mx-auto bg-zinc-900 text-white rounded-full flex items-center justify-center font-semibold mb-2 text-sm">3</div><span class="text-zinc-700">评审</span></div>
+            <div class="text-zinc-300 px-2">—</div>
+            <div class="text-center flex-1"><div class="w-9 h-9 mx-auto bg-zinc-900 text-white rounded-full flex items-center justify-center font-semibold mb-2 text-sm">4</div><span class="text-zinc-700">上线</span></div>
+            <div class="text-zinc-300 px-2">—</div>
+            <div class="text-center flex-1"><div class="w-9 h-9 mx-auto bg-zinc-900 text-white rounded-full flex items-center justify-center font-semibold mb-2 text-sm">5</div><span class="text-zinc-700">统计</span></div>
           </div>
         </div>
       </div>
@@ -475,14 +504,14 @@
   </main>
 
   <!-- ========== 右栏：AI 助手 ========== -->
-  <aside class="w-96 bg-white border-l border-gray-200 flex flex-col">
-    <div class="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
-      <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center text-white text-xs">🤖</div>
+  <aside class="w-96 bg-white border-l border-zinc-200 flex flex-col">
+    <div class="px-4 py-3 border-b border-zinc-200 flex items-center gap-2.5">
+      <div class="w-7 h-7 rounded-md bg-zinc-900 flex items-center justify-center text-white text-xs">AI</div>
       <div class="flex-1">
-        <div class="text-sm font-semibold text-gray-800">财务 AI 助手</div>
-        <div class="text-[10px] text-gray-400">基于知识库 RAG · Claude Opus 4.7</div>
+        <div class="text-sm font-semibold text-zinc-900 tracking-tight">财务 AI 助手</div>
+        <div class="text-[10px] text-zinc-400">基于知识库 RAG · Claude Opus 4.7</div>
       </div>
-      <button @click="chatHistory = []" class="text-xs text-gray-400 hover:text-gray-700">清空</button>
+      <button @click="chatHistory = []" class="text-xs text-zinc-400 hover:text-zinc-900 transition">清空</button>
     </div>
 
     <!-- 对话区 -->
@@ -490,16 +519,15 @@
       <!-- 欢迎语 + 建议问题 -->
       <template x-if="chatHistory.length === 0">
         <div>
-          <div class="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-3 text-sm text-gray-700 leading-relaxed">
-            👋 我已学习了知识库里所有文档。<br>
-            可以问我流程、税务、政策、项目细节，回答会标注引用源。
+          <div class="bg-zinc-50 border border-zinc-200 rounded-xl p-3.5 text-sm text-zinc-700 leading-relaxed">
+            我已学习了知识库里所有文档。可以问我流程、税务、政策、项目细节，回答会标注引用源。
           </div>
-          <div class="mt-3">
-            <div class="text-xs text-gray-400 mb-2">💡 试试问：</div>
+          <div class="mt-4">
+            <div class="text-[10px] text-zinc-400 mb-2 uppercase tracking-wider font-medium">试试问</div>
             <div class="space-y-1.5">
               <template x-for="q in qa.__suggested__" :key="q">
                 <button @click="askQuestion(q)"
-                        class="w-full text-left px-3 py-2 text-xs bg-gray-50 hover:bg-blue-50 hover:text-blue-700 rounded-md transition"
+                        class="w-full text-left px-3 py-2 text-xs bg-white border border-zinc-200 hover:bg-zinc-50 hover:border-zinc-400 text-zinc-700 rounded-md transition"
                         x-text="q"></button>
               </template>
             </div>
@@ -513,28 +541,28 @@
           <!-- 用户问 -->
           <template x-if="msg.role === 'user'">
             <div class="flex justify-end">
-              <div class="max-w-[85%] bg-blue-600 text-white rounded-lg rounded-tr-sm px-3 py-2 text-sm" x-text="msg.content"></div>
+              <div class="max-w-[85%] bg-zinc-900 text-white rounded-xl rounded-tr-sm px-3.5 py-2 text-sm" x-text="msg.content"></div>
             </div>
           </template>
           <!-- 助手答 -->
           <template x-if="msg.role === 'assistant'">
             <div class="flex justify-start">
               <div class="max-w-[90%]">
-                <div class="bg-gray-50 rounded-lg rounded-tl-sm px-3 py-2 text-sm text-gray-700 prose-doc" x-html="renderMd(msg.content)"></div>
+                <div class="bg-zinc-50 border border-zinc-200 rounded-xl rounded-tl-sm px-3.5 py-2.5 text-sm text-zinc-700 prose-doc" x-html="renderMd(msg.content)"></div>
                 <!-- 引用源 -->
-                <div x-show="msg.citations && msg.citations.length > 0" class="mt-2 space-y-1">
-                  <div class="text-[10px] text-gray-400">📚 引用源：</div>
+                <div x-show="msg.citations && msg.citations.length > 0" class="mt-2.5 space-y-1">
+                  <div class="text-[10px] text-zinc-400 uppercase tracking-wider font-medium">引用源</div>
                   <template x-for="c in msg.citations" :key="c.docId">
                     <button @click="goToDoc(getModuleByDoc(c.docId), c.docId)"
-                            class="block w-full text-left text-[11px] px-2 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded transition">
-                      📄 <span x-text="c.title"></span> · <span x-text="c.section" class="text-blue-500"></span>
+                            class="block w-full text-left text-[11px] px-2.5 py-1.5 bg-white border border-zinc-200 hover:border-zinc-400 text-zinc-700 rounded transition">
+                      <span class="text-zinc-400">→</span> <span x-text="c.title"></span> <span class="text-zinc-400">·</span> <span x-text="c.section" class="text-zinc-500"></span>
                     </button>
                   </template>
                 </div>
                 <!-- 双向流转：把对话保存为知识 -->
                 <button @click="saveDialogAsKnowledge(i)"
-                        class="mt-2 text-[10px] text-gray-400 hover:text-blue-600 flex items-center gap-1">
-                  <span>💾</span> 这条回答有价值 → 保存为知识库文档
+                        class="mt-2 text-[10px] text-zinc-400 hover:text-zinc-900 flex items-center gap-1 transition">
+                  <span>+</span> 保存为知识库文档
                 </button>
               </div>
             </div>
@@ -544,24 +572,24 @@
 
       <!-- loading -->
       <div x-show="chatLoading" class="flex justify-start">
-        <div class="bg-gray-50 rounded-lg px-3 py-2 text-sm text-gray-400">
+        <div class="bg-zinc-50 border border-zinc-200 rounded-xl px-3.5 py-2 text-sm text-zinc-400">
           <span class="inline-block animate-pulse">●●●</span> 检索知识库 + 生成回答…
         </div>
       </div>
     </div>
 
     <!-- 输入区 -->
-    <div class="p-3 border-t border-gray-100">
+    <div class="p-3 border-t border-zinc-200">
       <div class="relative">
         <textarea
           x-model="chatInput"
           @keydown.enter.prevent="!chatLoading && chatInput.trim() && askQuestion(chatInput)"
           rows="2"
           placeholder="问任何业务、流程、税务问题…  (Enter 发送)"
-          class="w-full bg-gray-50 border border-gray-200 focus:border-blue-400 outline-none rounded-lg p-2 text-sm resize-none"></textarea>
+          class="w-full bg-zinc-50 border border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none rounded-lg p-2.5 text-sm resize-none transition"></textarea>
         <button @click="chatInput.trim() && askQuestion(chatInput)"
                 :disabled="chatLoading || !chatInput.trim()"
-                class="absolute bottom-2 right-2 px-3 py-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-30 text-white rounded text-xs font-medium transition">
+                class="absolute bottom-2 right-2 px-3 py-1 bg-zinc-900 hover:bg-zinc-800 disabled:opacity-30 text-white rounded text-xs font-medium transition">
           发送
         </button>
       </div>
@@ -573,29 +601,31 @@
 <div x-show="selectedSkill" x-cloak
      @click.self="selectedSkill = null"
      x-transition.opacity
-     class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-8">
-  <div x-show="selectedSkill" x-transition class="bg-white rounded-xl max-w-3xl w-full max-h-[85vh] overflow-y-auto">
+     class="fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-8 backdrop-blur-sm">
+  <div x-show="selectedSkill" x-transition class="bg-white rounded-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto border border-zinc-200" style="box-shadow: 0 24px 48px rgba(0,0,0,0.12);">
     <template x-if="selectedSkill">
-      <div class="p-6">
-        <div class="flex items-start justify-between mb-4">
-          <div>
-            <div class="text-xs text-gray-400 font-mono" x-text="selectedSkill.name + '.skill'"></div>
-            <h2 class="text-2xl font-bold text-gray-800 mt-1" x-text="selectedSkill.title"></h2>
-            <div class="flex items-center gap-3 mt-2 text-xs text-gray-500">
-              <span>👤 <span x-text="selectedSkill.contributor"></span></span>
-              <span>📁 <span x-text="selectedSkill.domain"></span></span>
-              <span>📞 <span x-text="selectedSkill.calls"></span> 次调用</span>
-              <span class="px-2 py-0.5 bg-green-100 text-green-700 rounded-full" x-text="selectedSkill.status"></span>
+      <div class="p-7">
+        <div class="flex items-start justify-between mb-5 gap-4">
+          <div class="flex-1 min-w-0">
+            <div class="text-[11px] text-zinc-400 font-mono" x-text="selectedSkill.name + '.skill'"></div>
+            <h2 class="text-2xl font-semibold text-zinc-900 mt-1.5 tracking-tight" x-text="selectedSkill.title"></h2>
+            <div class="flex items-center gap-3 mt-3 text-xs text-zinc-500">
+              <span><span class="text-zinc-400">作者</span> <span x-text="selectedSkill.contributor" class="text-zinc-700"></span></span>
+              <span class="text-zinc-300">·</span>
+              <span><span class="text-zinc-400">分类</span> <span x-text="selectedSkill.domain" class="text-zinc-700"></span></span>
+              <span class="text-zinc-300">·</span>
+              <span><span class="font-mono text-zinc-700" x-text="selectedSkill.calls"></span> <span class="text-zinc-400">次调用</span></span>
+              <span class="px-2 py-0.5 bg-emerald-50 border border-emerald-100 text-emerald-700 rounded-full text-[10px] font-medium" x-text="selectedSkill.status"></span>
             </div>
           </div>
-          <button @click="selectedSkill = null" class="text-gray-400 hover:text-gray-700 text-2xl leading-none">×</button>
+          <button @click="selectedSkill = null" class="text-zinc-400 hover:text-zinc-900 text-2xl leading-none w-8 h-8 rounded-md hover:bg-zinc-100 flex items-center justify-center transition">×</button>
         </div>
-        <div class="bg-gray-900 text-gray-100 rounded-lg p-4 overflow-x-auto">
+        <div class="bg-zinc-900 text-zinc-100 rounded-xl p-4 overflow-x-auto border border-zinc-800">
           <pre class="text-xs leading-relaxed whitespace-pre-wrap font-mono"><code x-text="selectedSkill.content"></code></pre>
         </div>
-        <div class="mt-4 flex gap-2">
-          <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition">▶ 试运行</button>
-          <button class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm transition">📝 提议修改</button>
+        <div class="mt-5 flex gap-2">
+          <button class="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg text-sm font-medium transition">▶ 试运行</button>
+          <button class="px-4 py-2 bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 rounded-lg text-sm transition">提议修改</button>
         </div>
       </div>
     </template>
@@ -606,45 +636,45 @@
 <div x-show="showDraftSkill" x-cloak
      @click.self="closeDraft()"
      x-transition.opacity
-     class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-8">
-  <div x-show="showDraftSkill" x-transition class="bg-white rounded-xl max-w-2xl w-full max-h-[85vh] overflow-y-auto">
-    <div class="p-6">
+     class="fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-8 backdrop-blur-sm">
+  <div x-show="showDraftSkill" x-transition class="bg-white rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto border border-zinc-200" style="box-shadow: 0 24px 48px rgba(0,0,0,0.12);">
+    <div class="p-7">
       <div class="flex items-start justify-between mb-1">
-        <h2 class="text-xl font-bold text-gray-800">✨ 在线生成 Skill</h2>
-        <button @click="closeDraft()" class="text-gray-400 hover:text-gray-700 text-2xl leading-none">×</button>
+        <h2 class="text-xl font-semibold text-zinc-900 tracking-tight">✨ 在线生成 Skill</h2>
+        <button @click="closeDraft()" class="text-zinc-400 hover:text-zinc-900 text-2xl leading-none w-8 h-8 rounded-md hover:bg-zinc-100 flex items-center justify-center transition">×</button>
       </div>
-      <p class="text-sm text-gray-500 mb-5">填写 4 个字段，LLM 帮你起草 SKILL.md 初稿，你可以再精修后提交评审。</p>
+      <p class="text-sm text-zinc-500 mb-6">填写 4 个字段，LLM 帮你起草 SKILL.md 初稿，你可以再精修后提交评审。</p>
 
       <template x-if="!draftResult">
         <div class="space-y-4">
           <div>
-            <label class="text-xs text-gray-600 mb-1 block">使用场景 <span class="text-red-500">*</span></label>
+            <label class="text-xs text-zinc-600 mb-1.5 block font-medium">使用场景 <span class="text-red-500">*</span></label>
             <input type="text" x-model="draftForm.scenario"
                    placeholder="如：每月初自动给销售团队发上月回款排行榜"
-                   class="w-full bg-gray-50 border border-gray-200 focus:border-blue-400 outline-none rounded-lg p-2 text-sm">
+                   class="w-full bg-zinc-50 border border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none rounded-lg px-3 py-2 text-sm transition">
           </div>
           <div>
-            <label class="text-xs text-gray-600 mb-1 block">输入</label>
+            <label class="text-xs text-zinc-600 mb-1.5 block font-medium">输入</label>
             <input type="text" x-model="draftForm.inputs"
                    placeholder="如：上月销售订单、回款记录"
-                   class="w-full bg-gray-50 border border-gray-200 focus:border-blue-400 outline-none rounded-lg p-2 text-sm">
+                   class="w-full bg-zinc-50 border border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none rounded-lg px-3 py-2 text-sm transition">
           </div>
           <div>
-            <label class="text-xs text-gray-600 mb-1 block">输出</label>
+            <label class="text-xs text-zinc-600 mb-1.5 block font-medium">输出</label>
             <input type="text" x-model="draftForm.outputs"
                    placeholder="如：飞书富文本卡片，包含 Top10 销售排行"
-                   class="w-full bg-gray-50 border border-gray-200 focus:border-blue-400 outline-none rounded-lg p-2 text-sm">
+                   class="w-full bg-zinc-50 border border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none rounded-lg px-3 py-2 text-sm transition">
           </div>
           <div>
-            <label class="text-xs text-gray-600 mb-1 block">触发条件</label>
+            <label class="text-xs text-zinc-600 mb-1.5 block font-medium">触发条件</label>
             <input type="text" x-model="draftForm.trigger"
                    placeholder="如：每月 1 号 09:00 定时触发"
-                   class="w-full bg-gray-50 border border-gray-200 focus:border-blue-400 outline-none rounded-lg p-2 text-sm">
+                   class="w-full bg-zinc-50 border border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none rounded-lg px-3 py-2 text-sm transition">
           </div>
           <button @click="draftSkillSubmit()"
                   :disabled="!draftForm.scenario || draftLoading"
-                  class="w-full px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-lg font-medium text-sm transition">
-            <span x-show="!draftLoading">🤖 让 Claude 帮我起草</span>
+                  class="w-full px-4 py-2.5 bg-zinc-900 hover:bg-zinc-800 disabled:opacity-50 text-white rounded-lg font-medium text-sm transition">
+            <span x-show="!draftLoading">让 Claude 帮我起草</span>
             <span x-show="draftLoading">起草中…</span>
           </button>
         </div>
@@ -652,13 +682,13 @@
 
       <template x-if="draftResult">
         <div>
-          <div class="text-xs text-green-700 mb-2">✓ 已生成草稿，下面是 SKILL.md：</div>
-          <div class="bg-gray-900 text-gray-100 rounded-lg p-4 overflow-x-auto">
+          <div class="text-xs text-emerald-700 mb-3 flex items-center gap-1.5"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>已生成草稿，下面是 SKILL.md：</div>
+          <div class="bg-zinc-900 text-zinc-100 rounded-xl p-4 overflow-x-auto border border-zinc-800">
             <pre class="text-xs leading-relaxed whitespace-pre-wrap font-mono"><code x-text="draftResult"></code></pre>
           </div>
-          <div class="flex gap-2 mt-4">
-            <button @click="submitForReview()" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition">📤 提交评审</button>
-            <button @click="draftResult = ''" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm transition">↻ 重新生成</button>
+          <div class="flex gap-2 mt-5">
+            <button @click="submitForReview()" class="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg text-sm font-medium transition">提交评审</button>
+            <button @click="draftResult = ''" class="px-4 py-2 bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 rounded-lg text-sm transition">↻ 重新生成</button>
           </div>
         </div>
       </template>
@@ -670,32 +700,32 @@
 <div x-show="showContribute" x-cloak
      @click.self="closeContribute()"
      x-transition.opacity
-     class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-6 overflow-y-auto">
-  <div x-show="showContribute" x-transition class="bg-white rounded-xl max-w-3xl w-full max-h-[92vh] overflow-y-auto my-auto">
-    <div class="p-6">
+     class="fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-6 overflow-y-auto backdrop-blur-sm">
+  <div x-show="showContribute" x-transition class="bg-white rounded-2xl max-w-3xl w-full max-h-[92vh] overflow-y-auto my-auto border border-zinc-200" style="box-shadow: 0 24px 48px rgba(0,0,0,0.12);">
+    <div class="p-7">
       <!-- 标题 + 关闭 -->
       <div class="flex items-start justify-between mb-2">
         <div>
-          <h2 class="text-xl font-bold text-gray-800">＋ 团队贡献</h2>
-          <p class="text-sm text-gray-500 mt-1">每个团队成员都能写文档、上传文件、发起 Skill 提案。所有贡献经评审后入库，并由 LLM 自动建索引。</p>
+          <h2 class="text-xl font-semibold text-zinc-900 tracking-tight">＋ 团队贡献</h2>
+          <p class="text-sm text-zinc-500 mt-1.5">每个团队成员都能写文档、上传文件、发起 Skill 提案。所有贡献经评审后入库，并由 LLM 自动建索引。</p>
         </div>
-        <button @click="closeContribute()" class="text-gray-400 hover:text-gray-700 text-2xl leading-none">×</button>
+        <button @click="closeContribute()" class="text-zinc-400 hover:text-zinc-900 text-2xl leading-none w-8 h-8 rounded-md hover:bg-zinc-100 flex items-center justify-center transition">×</button>
       </div>
 
       <!-- Tab 切换 -->
-      <div class="flex gap-1 mt-4 mb-5 border-b border-gray-200">
+      <div class="flex gap-1 mt-5 mb-6 border-b border-zinc-200">
         <button @click="contributeTab = 'create'"
-                :class="contributeTab === 'create' ? 'text-blue-700 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-800'"
+                :class="contributeTab === 'create' ? 'text-zinc-900 border-b-2 border-zinc-900' : 'text-zinc-500 hover:text-zinc-900'"
                 class="px-4 py-2 text-sm font-medium transition -mb-px">
           ✍️ 新建文档
         </button>
         <button @click="contributeTab = 'upload'"
-                :class="contributeTab === 'upload' ? 'text-blue-700 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-800'"
+                :class="contributeTab === 'upload' ? 'text-zinc-900 border-b-2 border-zinc-900' : 'text-zinc-500 hover:text-zinc-900'"
                 class="px-4 py-2 text-sm font-medium transition -mb-px">
-          📎 上传文件（合同 / 报表 / 凭证）
+          📎 上传文件
         </button>
         <button @click="contributeTab = 'skill'"
-                :class="contributeTab === 'skill' ? 'text-blue-700 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-800'"
+                :class="contributeTab === 'skill' ? 'text-zinc-900 border-b-2 border-zinc-900' : 'text-zinc-500 hover:text-zinc-900'"
                 class="px-4 py-2 text-sm font-medium transition -mb-px">
           🛠️ 提议 Skill
         </button>
@@ -707,17 +737,17 @@
           <!-- Step 1：选模板类型 -->
           <template x-if="createStep === 1">
             <div>
-              <div class="text-xs text-gray-500 mb-3">选一个文档类型，套用结构化模板（符合 Karpathy LLM Wiki 规范）</div>
+              <div class="text-xs text-zinc-500 mb-4">选一个文档类型，套用结构化模板（符合 Karpathy LLM Wiki 规范）</div>
               <div class="grid grid-cols-2 gap-3">
                 <template x-for="t in createTypes" :key="t.id">
                   <div @click="selectCreateType(t)"
-                       class="border border-gray-200 hover:border-blue-400 hover:bg-blue-50 rounded-lg p-4 cursor-pointer transition">
-                    <div class="flex items-center gap-2 mb-1">
-                      <span class="text-xl" x-text="t.icon"></span>
-                      <span class="font-semibold text-gray-800" x-text="t.label"></span>
+                       class="border border-zinc-200 hover:border-zinc-900 rounded-xl p-4 cursor-pointer transition group">
+                    <div class="flex items-center gap-2 mb-1.5">
+                      <span class="text-lg" x-text="t.icon"></span>
+                      <span class="font-semibold text-zinc-900 tracking-tight" x-text="t.label"></span>
                     </div>
-                    <div class="text-xs text-gray-500" x-text="t.desc"></div>
-                    <div class="text-[10px] text-gray-400 mt-2" x-text="'归属：' + getModule(t.module).name"></div>
+                    <div class="text-xs text-zinc-500 leading-relaxed" x-text="t.desc"></div>
+                    <div class="text-[10px] text-zinc-400 mt-2.5 pt-2.5 border-t border-zinc-100" x-text="'归属：' + getModule(t.module).name"></div>
                   </div>
                 </template>
               </div>
@@ -726,71 +756,71 @@
 
           <!-- Step 2：填表 -->
           <template x-if="createStep === 2">
-            <div class="space-y-3">
-              <div class="flex items-center gap-2 text-xs text-gray-500">
-                <button @click="createStep = 1" class="text-blue-600 hover:underline">← 返回选类型</button>
-                <span>·</span>
+            <div class="space-y-4">
+              <div class="flex items-center gap-2 text-xs text-zinc-500">
+                <button @click="createStep = 1" class="text-zinc-900 hover:underline font-medium">← 返回选类型</button>
+                <span class="text-zinc-300">·</span>
                 <span x-text="'当前：' + createType.icon + ' ' + createType.label"></span>
               </div>
 
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label class="text-xs text-gray-600 mb-1 block">归属模块 <span class="text-red-500">*</span></label>
+                  <label class="text-xs text-zinc-600 mb-1.5 block font-medium">归属模块 <span class="text-red-500">*</span></label>
                   <select x-model="createForm.module"
-                          class="w-full bg-gray-50 border border-gray-200 focus:border-blue-400 outline-none rounded-lg p-2 text-sm">
+                          class="w-full bg-zinc-50 border border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none rounded-lg px-3 py-2 text-sm transition">
                     <template x-for="m in modules.filter(x => !['home','datahub','reports'].includes(x.id))" :key="m.id">
                       <option :value="m.id" x-text="m.icon + ' ' + m.num + ' ' + m.name"></option>
                     </template>
                   </select>
                 </div>
                 <div>
-                  <label class="text-xs text-gray-600 mb-1 block">作者</label>
+                  <label class="text-xs text-zinc-600 mb-1.5 block font-medium">作者</label>
                   <input type="text" value="当前用户" disabled
-                         class="w-full bg-gray-100 border border-gray-200 rounded-lg p-2 text-sm text-gray-500">
+                         class="w-full bg-zinc-100 border border-zinc-200 rounded-lg px-3 py-2 text-sm text-zinc-500">
                 </div>
               </div>
 
               <div>
-                <label class="text-xs text-gray-600 mb-1 block">标题 <span class="text-red-500">*</span></label>
+                <label class="text-xs text-zinc-600 mb-1.5 block font-medium">标题 <span class="text-red-500">*</span></label>
                 <input type="text" x-model="createForm.title"
                        :placeholder="createType?.id === 'sop' ? '如：跨境付款审批流程' : createType?.id === 'knowledge' ? '如：股权激励的会计处理' : createType?.id === 'project' ? '如：B 轮融资项目档案' : '如：客户对账函模板'"
-                       class="w-full bg-gray-50 border border-gray-200 focus:border-blue-400 outline-none rounded-lg p-2 text-sm">
+                       class="w-full bg-zinc-50 border border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none rounded-lg px-3 py-2 text-sm transition">
               </div>
 
               <div>
-                <label class="text-xs text-gray-600 mb-1 block">标签（用逗号分隔）</label>
+                <label class="text-xs text-zinc-600 mb-1.5 block font-medium">标签（用逗号分隔）</label>
                 <input type="text" x-model="createForm.tags"
                        placeholder="如：税务, 跨境, 外管"
-                       class="w-full bg-gray-50 border border-gray-200 focus:border-blue-400 outline-none rounded-lg p-2 text-sm">
+                       class="w-full bg-zinc-50 border border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none rounded-lg px-3 py-2 text-sm transition">
               </div>
 
               <div>
-                <div class="flex items-center justify-between mb-1">
-                  <label class="text-xs text-gray-600">正文（Markdown，支持 [[文档ID]] wiki link）</label>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label class="text-xs text-zinc-600 font-medium">正文（Markdown，支持 [[文档ID]] wiki link）</label>
                   <button @click="aiDraftDoc()"
                           :disabled="createDrafting"
-                          class="text-xs px-2 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded transition flex items-center gap-1 disabled:opacity-50">
+                          class="text-xs px-2.5 py-1 bg-zinc-900 hover:bg-zinc-800 text-white rounded transition flex items-center gap-1 disabled:opacity-50">
                     <span x-show="!createDrafting">✨ AI 帮我起草</span>
                     <span x-show="createDrafting">起草中…</span>
                   </button>
                 </div>
                 <textarea x-model="createForm.body" rows="14"
-                          class="w-full bg-gray-50 border border-gray-200 focus:border-blue-400 outline-none rounded-lg p-3 text-xs font-mono leading-relaxed"
+                          class="w-full bg-zinc-50 border border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none rounded-lg p-3 text-xs font-mono leading-relaxed transition"
                           placeholder="在这里写 Markdown..."></textarea>
-                <div class="text-[10px] text-gray-400 mt-1">提示：保存时会自动按规范生成 frontmatter（owner / updated / version / tags / related），无需手填</div>
+                <div class="text-[10px] text-zinc-400 mt-1.5">提示：保存时会自动按规范生成 frontmatter（owner / updated / version / tags / related），无需手填</div>
               </div>
 
               <!-- 实时预览 -->
-              <details class="bg-gray-50 rounded-lg border border-gray-200">
-                <summary class="px-3 py-2 text-xs text-gray-600 cursor-pointer hover:bg-gray-100">👁 实时预览</summary>
-                <div class="p-4 prose-doc bg-white" x-html="renderMd(createForm.body || '_（在上方输入 markdown 后这里会实时渲染）_')"></div>
+              <details class="bg-zinc-50 rounded-lg border border-zinc-200">
+                <summary class="px-3 py-2 text-xs text-zinc-600 cursor-pointer hover:bg-zinc-100 font-medium">实时预览</summary>
+                <div class="p-4 prose-doc bg-white border-t border-zinc-200" x-html="renderMd(createForm.body || '_（在上方输入 markdown 后这里会实时渲染）_')"></div>
               </details>
 
-              <div class="flex justify-between items-center pt-2">
-                <div class="text-xs text-gray-400">提交后将进入评审队列（CFO + 1 名同事）</div>
+              <div class="flex justify-between items-center pt-3 border-t border-zinc-100 mt-5">
+                <div class="text-xs text-zinc-400">提交后进入评审队列（CFO + 1 名同事）</div>
                 <button @click="submitCreate()"
-                        class="px-5 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition">
-                  📤 提交评审
+                        class="px-5 py-2 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg text-sm font-medium transition">
+                  提交评审
                 </button>
               </div>
             </div>
@@ -801,53 +831,53 @@
       <!-- ======== Tab 2：上传文件 ======== -->
       <template x-if="contributeTab === 'upload'">
         <div>
-          <div class="text-xs text-gray-500 mb-3">支持合同 PDF、报表 Excel、发票凭证图片。上传后由 OCR 识别 + LLM 自动归类到合适模块。</div>
+          <div class="text-xs text-zinc-500 mb-4">支持合同 PDF、报表 Excel、发票凭证图片。上传后由 OCR 识别 + LLM 自动归类到合适模块。</div>
 
           <label for="upload-input"
-                 class="block border-2 border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50 rounded-lg p-10 text-center cursor-pointer transition">
-            <div class="text-5xl mb-3">📎</div>
-            <div class="text-sm text-gray-700 font-medium mb-1">点击或拖拽上传文件</div>
-            <div class="text-xs text-gray-400">PDF · XLSX · DOCX · PNG · JPG（单文件 ≤ 50MB）</div>
+                 class="block border-2 border-dashed border-zinc-300 hover:border-zinc-900 hover:bg-zinc-50 rounded-xl p-10 text-center cursor-pointer transition">
+            <div class="text-4xl mb-3 text-zinc-400">📎</div>
+            <div class="text-sm text-zinc-900 font-medium mb-1">点击或拖拽上传文件</div>
+            <div class="text-xs text-zinc-400">PDF · XLSX · DOCX · PNG · JPG（单文件 ≤ 50MB）</div>
             <input id="upload-input" type="file" multiple class="hidden" @change="handleFileUpload($event)">
           </label>
 
-          <div x-show="uploadedFiles.length > 0" class="mt-4">
-            <div class="text-xs text-gray-500 mb-2">上传队列</div>
+          <div x-show="uploadedFiles.length > 0" class="mt-5">
+            <div class="text-[10px] text-zinc-400 mb-2 uppercase tracking-wider font-medium">上传队列</div>
             <div class="space-y-2">
               <template x-for="(f, idx) in uploadedFiles" :key="idx">
-                <div class="bg-gray-50 border border-gray-200 rounded-lg p-3 flex items-center gap-3">
-                  <span class="text-xl shrink-0">📄</span>
+                <div class="bg-white border border-zinc-200 rounded-lg p-3 flex items-center gap-3">
+                  <span class="text-lg shrink-0 text-zinc-400">📄</span>
                   <div class="flex-1 min-w-0">
-                    <div class="text-sm font-medium text-gray-800 truncate" x-text="f.name"></div>
-                    <div class="text-xs text-gray-400" x-text="f.size + ' · ' + f.status"></div>
-                    <div x-show="f.module" class="text-xs text-blue-600 mt-1">
-                      🤖 自动归类到：<span x-text="getModule(f.module).icon + ' ' + getModule(f.module).name"></span>
-                      <span x-show="f.suggestedTags" class="ml-2 text-gray-400">建议标签：<span x-text="(f.suggestedTags || []).join('、')"></span></span>
+                    <div class="text-sm font-medium text-zinc-900 truncate" x-text="f.name"></div>
+                    <div class="text-xs text-zinc-400 mt-0.5" x-text="f.size + ' · ' + f.status"></div>
+                    <div x-show="f.module" class="text-xs text-zinc-700 mt-1.5">
+                      自动归类到 <span x-text="getModule(f.module).icon + ' ' + getModule(f.module).name" class="font-medium"></span>
+                      <span x-show="f.suggestedTags" class="ml-2 text-zinc-400">· 建议标签 <span x-text="(f.suggestedTags || []).join('、')"></span></span>
                     </div>
                   </div>
                   <span x-show="!f.module" class="text-xs text-amber-600 shrink-0">处理中…</span>
-                  <span x-show="f.module" class="text-xs text-green-600 shrink-0">✓ 完成</span>
+                  <span x-show="f.module" class="text-xs text-emerald-600 shrink-0">✓ 完成</span>
                 </div>
               </template>
             </div>
           </div>
 
-          <div class="mt-5 p-3 bg-blue-50 rounded-lg text-xs text-blue-700 border border-blue-100">
-            <div class="font-semibold mb-1">💡 真实接入说明</div>
-            上传管道：对象存储 → OCR（textract / aliyun OCR）→ <code>LLM.classifyDoc</code> 自动归类 → 抽取 frontmatter → 入库 → 通知贡献者审阅。详见 <code>integrations.js</code> 的 <code>FileIngest.upload</code>。
+          <div class="mt-6 p-3.5 bg-zinc-50 rounded-lg text-xs text-zinc-700 border border-zinc-200">
+            <div class="font-medium mb-1 text-zinc-900">真实接入说明</div>
+            上传管道：对象存储 → OCR（textract / aliyun OCR）→ <code class="bg-white px-1.5 py-0.5 rounded border border-zinc-200">LLM.classifyDoc</code> 自动归类 → 抽取 frontmatter → 入库 → 通知贡献者审阅。详见 <code class="bg-white px-1.5 py-0.5 rounded border border-zinc-200">integrations.js</code> 的 <code class="bg-white px-1.5 py-0.5 rounded border border-zinc-200">FileIngest.upload</code>。
           </div>
         </div>
       </template>
 
-      <!-- ======== Tab 3：提议 Skill（指向已有的 Skills 工坊弹层） ======== -->
+      <!-- ======== Tab 3：提议 Skill ======== -->
       <template x-if="contributeTab === 'skill'">
         <div class="text-center py-10">
-          <div class="text-5xl mb-3">🛠️</div>
-          <div class="text-sm text-gray-700 mb-2">把你解决过的问题封装为团队共享 Skill</div>
-          <div class="text-xs text-gray-500 mb-5 max-w-md mx-auto">每个 Skill 是一段可复用的工作流（生成报告、校验发票、对账等），写一次全团队都能调用。</div>
+          <div class="text-4xl mb-3 text-zinc-400">🛠️</div>
+          <div class="text-base text-zinc-900 font-medium mb-2 tracking-tight">把你解决过的问题封装为团队共享 Skill</div>
+          <div class="text-sm text-zinc-500 mb-6 max-w-md mx-auto leading-relaxed">每个 Skill 是一段可复用的工作流（生成报告、校验发票、对账等），写一次全团队都能调用。</div>
           <button @click="closeContribute(); selectModule('skills'); $nextTick(() => showDraftSkill = true);"
-                  class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition">
-            ✨ 进入 Skills 工坊在线生成
+                  class="px-5 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg text-sm font-medium transition">
+            进入 Skills 工坊在线生成 →
           </button>
         </div>
       </template>
@@ -1007,7 +1037,8 @@
      x-transition:enter="transition ease-out duration-300"
      x-transition:enter-start="opacity-0 translate-y-2"
      x-transition:enter-end="opacity-100 translate-y-0"
-     class="fixed bottom-6 right-6 z-50 bg-gray-900 text-white px-4 py-3 rounded-lg shadow-lg max-w-sm text-sm">
+     class="fixed bottom-6 right-6 z-50 bg-zinc-900 text-white px-4 py-3 rounded-xl max-w-sm text-sm border border-zinc-800"
+     style="box-shadow: 0 16px 36px rgba(0,0,0,0.16);">
   <span x-text="toast.msg"></span>
 </div>
 
@@ -1668,14 +1699,24 @@ function app() {
       if (!el) return;
       const chart = echarts.init(el);
       chart.setOption({
-        tooltip: { trigger: 'axis' },
-        legend: { data: ['实际', '预算'], right: 0, top: 0 },
+        tooltip: { trigger: 'axis', backgroundColor: '#18181b', borderColor: '#27272a', textStyle: { color: '#fafafa', fontSize: 12 } },
+        legend: { data: ['实际', '预算'], right: 0, top: 0, textStyle: { color: '#52525b', fontSize: 11 }, icon: 'circle', itemWidth: 8 },
         grid: { left: 30, right: 10, bottom: 30, top: 30 },
-        xAxis: { type: 'category', data: this.kpis.revenueTrend.months, axisLine: { lineStyle: { color: '#d1d5db' } } },
-        yAxis: { type: 'value', axisLine: { show: false }, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+        xAxis: {
+          type: 'category', data: this.kpis.revenueTrend.months,
+          axisLine: { lineStyle: { color: '#e4e4e7' } },
+          axisLabel: { color: '#71717a', fontSize: 11 },
+          axisTick: { show: false },
+        },
+        yAxis: {
+          type: 'value',
+          axisLine: { show: false }, axisTick: { show: false },
+          axisLabel: { color: '#a1a1aa', fontSize: 11 },
+          splitLine: { lineStyle: { color: '#f4f4f5' } },
+        },
         series: [
-          { name: '实际', type: 'bar', data: this.kpis.revenueTrend.actual, itemStyle: { color: '#3370ff' }, barWidth: 24 },
-          { name: '预算', type: 'line', data: this.kpis.revenueTrend.budget, lineStyle: { color: '#a78bfa', type: 'dashed' }, itemStyle: { color: '#a78bfa' } },
+          { name: '实际', type: 'bar', data: this.kpis.revenueTrend.actual, itemStyle: { color: '#18181b', borderRadius: [3, 3, 0, 0] }, barWidth: 18 },
+          { name: '预算', type: 'line', data: this.kpis.revenueTrend.budget, lineStyle: { color: '#a1a1aa', type: 'dashed', width: 1.5 }, itemStyle: { color: '#a1a1aa' }, symbolSize: 6 },
         ],
       });
     },
