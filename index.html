@@ -9,7 +9,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 
 <!-- 字体 -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap">
 
 <!-- Markdown 渲染 -->
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -53,6 +53,68 @@
   .pulse-dark { animation: pulse-dark 1.8s infinite; }
   /* 显示标题字号 */
   .display-title { font-size: 2.5rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; color: #18181b; }
+
+  /* ===== Flipbook 翻书阅读模式 ===== */
+  .flipbook-bg {
+    background:
+      radial-gradient(ellipse at 30% 20%, #3d342a 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 80%, #2a221a 0%, transparent 50%),
+      #1f1a14;
+  }
+  .flip-paper {
+    background:
+      linear-gradient(to right, rgba(120,80,40,0.08) 0%, transparent 4%, transparent 96%, rgba(120,80,40,0.08) 100%),
+      linear-gradient(to bottom, #faf7ef, #f5f1e6);
+    box-shadow:
+      0 30px 80px rgba(0,0,0,0.5),
+      0 6px 16px rgba(0,0,0,0.25),
+      inset 0 0 80px rgba(120,80,40,0.04);
+    border-radius: 3px;
+    transition: transform 0.55s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease;
+    transform-origin: center;
+  }
+  .flip-paper.flipping-next { transform: rotateY(-22deg) translateX(-6%); opacity: 0.25; }
+  .flip-paper.flipping-prev { transform: rotateY(22deg)  translateX(6%);  opacity: 0.25; }
+  /* 装订线（中缝） */
+  .flip-spine {
+    position: absolute; left: 50%; top: 0; bottom: 0; width: 24px; transform: translateX(-50%);
+    background:
+      linear-gradient(to right,
+        transparent 0%, rgba(80,50,20,0.04) 30%, rgba(80,50,20,0.18) 48%,
+        rgba(80,50,20,0.22) 50%, rgba(80,50,20,0.18) 52%, rgba(80,50,20,0.04) 70%, transparent 100%);
+    pointer-events: none;
+  }
+  /* 书页内文字（衬线） */
+  .flip-serif { font-family: 'Noto Serif SC', 'Songti SC', 'Source Han Serif SC', Georgia, serif; color: #2a241e; }
+  .flip-serif h1 { font-size: 1.6rem; font-weight: 700; line-height: 1.35; margin-bottom: 1rem; letter-spacing: 0; column-span: all; border-bottom: 2px double rgba(120,80,40,0.35); padding-bottom: 0.75rem; }
+  .flip-serif h2 { font-size: 1.125rem; font-weight: 600; margin: 1.25rem 0 0.5rem; color: #2a241e; border-bottom: 1px solid rgba(120,80,40,0.2); padding-bottom: 0.35rem; }
+  .flip-serif h3 { font-size: 1rem; font-weight: 600; margin: 1rem 0 0.4rem; color: #2a241e; }
+  .flip-serif p  { line-height: 1.85; color: #4a3f33; text-align: justify; margin: 0.6rem 0; }
+  .flip-serif ul, .flip-serif ol { line-height: 1.85; color: #4a3f33; padding-left: 1.4rem; margin: 0.6rem 0; }
+  .flip-serif li { margin: 0.25rem 0; }
+  .flip-serif strong { color: #2a241e; font-weight: 600; }
+  .flip-serif table { border-collapse: collapse; margin: 0.75rem 0; font-size: 0.78rem; width: 100%; }
+  .flip-serif th { background: rgba(120,80,40,0.06); text-align: left; padding: 0.4rem 0.5rem; border: 1px solid rgba(120,80,40,0.25); font-weight: 600; color: #2a241e; }
+  .flip-serif td { padding: 0.4rem 0.5rem; border: 1px solid rgba(120,80,40,0.18); color: #4a3f33; }
+  .flip-serif code { background: rgba(120,80,40,0.1); padding: 0.1rem 0.4rem; border-radius: 3px; font-family: 'SF Mono', Monaco, monospace; font-size: 0.85em; color: #5a3a1a; }
+  .flip-serif pre { background: rgba(60,40,20,0.95); color: #faf7ef; padding: 0.8rem; border-radius: 4px; overflow-x: auto; margin: 0.75rem 0; font-size: 0.78rem; }
+  .flip-serif pre code { background: transparent; color: inherit; padding: 0; }
+  .flip-serif blockquote { border-left: 3px solid rgba(120,80,40,0.45); padding: 0.3rem 1rem; background: rgba(120,80,40,0.04); color: #5a4a3a; margin: 0.75rem 0; font-style: italic; }
+  .flip-serif a { color: #5a3a1a; text-decoration: underline; text-decoration-color: rgba(120,80,40,0.4); }
+  /* 对开双栏 */
+  .flip-columns { column-count: 2; column-gap: 3.5rem; column-rule: 1px solid rgba(120,80,40,0.12); }
+  .flip-columns h2, .flip-columns h3 { break-after: avoid; break-inside: avoid; }
+  .flip-columns p, .flip-columns table, .flip-columns ul, .flip-columns ol, .flip-columns pre, .flip-columns blockquote { break-inside: avoid; }
+  /* 隐藏 flipbook 内滚动条但允许滚动 */
+  .flip-scroll { scrollbar-width: thin; scrollbar-color: rgba(120,80,40,0.3) transparent; }
+  .flip-scroll::-webkit-scrollbar { width: 4px; }
+  .flip-scroll::-webkit-scrollbar-thumb { background: rgba(120,80,40,0.3); border-radius: 2px; }
+  /* 翻页按钮 */
+  .flip-nav { color: rgba(250,247,239,0.5); transition: all 0.2s; background: rgba(250,247,239,0.05); backdrop-filter: blur(8px); border: 1px solid rgba(250,247,239,0.1); }
+  .flip-nav:hover { color: rgba(250,247,239,1); background: rgba(250,247,239,0.12); transform: scale(1.05); }
+  .flip-nav:disabled { opacity: 0.25; cursor: not-allowed; }
+  .flip-nav:disabled:hover { transform: none; background: rgba(250,247,239,0.05); }
+
   [x-cloak] { display: none !important; }
 </style>
 </head>
@@ -274,6 +336,10 @@
             <div class="flex items-start justify-between mb-6 gap-4">
               <h1 class="display-title flex-1" x-text="docs[currentDocId].meta.title"></h1>
               <div class="flex gap-2 shrink-0 mt-2">
+                <button @click="openFlipbook()"
+                        class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg text-xs font-medium transition flex items-center gap-1.5">
+                  <span>📖</span> 翻书阅读
+                </button>
                 <button @click="editCurrentDoc()"
                         class="px-3 py-1.5 bg-white border border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300 text-zinc-700 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
                   <span>✏️</span> 编辑
@@ -1032,6 +1098,99 @@
   </div>
 </div>
 
+<!-- ========== Flipbook 翻书阅读模式 ========== -->
+<div x-show="showFlipbook" x-cloak
+     x-transition:enter="transition ease-out duration-400"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     class="fixed inset-0 z-[70] flex flex-col flipbook-bg">
+
+  <!-- 顶部工具条 -->
+  <div class="px-6 py-3 flex items-center justify-between z-10">
+    <div class="flex items-center gap-3">
+      <button @click="closeFlipbook()" class="text-stone-300 hover:text-white text-sm font-medium transition flex items-center gap-1">
+        <span>←</span> 返回
+      </button>
+      <span class="text-stone-500">·</span>
+      <span class="text-stone-300 text-sm" x-text="getModule(getModuleByDoc(flipbookCurrentId)).name + ' · 阅读模式'"></span>
+    </div>
+    <div class="text-stone-400 text-xs font-mono">
+      <span x-text="flipbookIndex + 1"></span> <span class="text-stone-600">/</span> <span x-text="flipbookDocs.length"></span>
+    </div>
+    <div class="text-stone-500 text-[10px] uppercase tracking-wider">
+      ← → 键翻页 · ESC 退出
+    </div>
+  </div>
+
+  <!-- 书 -->
+  <div class="flex-1 flex items-center justify-center px-12 pb-8 relative overflow-hidden">
+    <div style="perspective: 2400px; width: 100%; max-width: 1150px; height: 100%;" class="flex items-center justify-center">
+      <div class="flip-paper relative w-full h-full overflow-hidden"
+           :class="flipping === 'next' ? 'flipping-next' : flipping === 'prev' ? 'flipping-prev' : ''"
+           style="max-height: 82vh;">
+        <!-- 装订中缝 -->
+        <div class="flip-spine"></div>
+
+        <!-- 书页内容 -->
+        <template x-if="flipbookCurrentDoc">
+          <div class="h-full overflow-y-auto flip-scroll px-14 py-10">
+            <!-- 文档头：标题 + frontmatter（在第一栏上方） -->
+            <div class="flip-serif mb-6">
+              <div class="flex items-center justify-between mb-3 pb-2 border-b border-amber-900/15">
+                <div class="text-[10px] uppercase tracking-[0.2em] text-stone-500" x-text="getModule(getModuleByDoc(flipbookCurrentId)).num + ' · ' + getModule(getModuleByDoc(flipbookCurrentId)).name"></div>
+                <div class="text-[10px] text-stone-500 font-mono" x-text="'v' + flipbookCurrentDoc.meta.version + ' · ' + flipbookCurrentDoc.meta.updated"></div>
+              </div>
+              <h1 x-text="flipbookCurrentDoc.meta.title"></h1>
+              <div class="text-[11px] text-stone-500 italic mt-2" x-text="'— ' + flipbookCurrentDoc.meta.owner + '   ·   ' + (flipbookCurrentDoc.meta.tags || []).join(' · ')"></div>
+            </div>
+
+            <!-- 正文：对开双栏 -->
+            <div class="flip-serif flip-columns" x-html="renderMd(flipbookCurrentDoc.body)"></div>
+
+            <!-- 反向链接 -->
+            <div x-show="(flipbookCurrentDoc.meta.related || []).length > 0" class="flip-serif mt-8 pt-5 border-t border-amber-900/15">
+              <div class="text-[10px] uppercase tracking-[0.2em] text-stone-500 mb-2">延伸阅读</div>
+              <div class="flex flex-wrap gap-2">
+                <template x-for="rid in (flipbookCurrentDoc.meta.related || [])" :key="rid">
+                  <button @click="flipToDoc(rid)"
+                          class="text-xs px-3 py-1 border border-amber-900/25 hover:bg-amber-900/5 text-stone-700 rounded transition"
+                          x-text="docs[rid]?.meta?.title || rid"></button>
+                </template>
+              </div>
+            </div>
+
+            <!-- 页脚 -->
+            <div class="flip-serif text-center mt-10 pt-4 text-[10px] text-stone-400 italic">
+              — Acme 财务知识库 · 第 <span x-text="flipbookIndex + 1"></span> 页 / 共 <span x-text="flipbookDocs.length"></span> 页 —
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <!-- 左翻页 -->
+    <button @click="flipPrev()" :disabled="flipbookIndex === 0 || flipping"
+            class="flip-nav absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full flex items-center justify-center text-2xl">
+      ‹
+    </button>
+    <!-- 右翻页 -->
+    <button @click="flipNext()" :disabled="flipbookIndex >= flipbookDocs.length - 1 || flipping"
+            class="flip-nav absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full flex items-center justify-center text-2xl">
+      ›
+    </button>
+  </div>
+
+  <!-- 底部页码导航（缩略） -->
+  <div class="px-6 py-3 flex items-center justify-center gap-1.5">
+    <template x-for="(id, i) in flipbookDocs" :key="id">
+      <button @click="flipToIndex(i)"
+              :class="i === flipbookIndex ? 'bg-stone-200 w-8' : 'bg-stone-600 hover:bg-stone-400 w-2'"
+              class="h-2 rounded-full transition-all"
+              :title="docs[id]?.meta?.title"></button>
+    </template>
+  </div>
+</div>
+
 <!-- ========== Toast ========== -->
 <div x-show="toast.show" x-cloak
      x-transition:enter="transition ease-out duration-300"
@@ -1129,6 +1288,19 @@ function app() {
       return this.docs[id]?.meta?.updated || '';
     },
 
+    // Flipbook 翻书阅读
+    showFlipbook:   false,
+    flipbookDocs:   [],          // 当前模块下所有文档 id（按目录顺序）
+    flipbookIndex:  0,
+    flipping:       null,        // null | 'next' | 'prev'（CSS 动画用）
+    get flipbookCurrentId() {
+      return this.flipbookDocs[this.flipbookIndex] || null;
+    },
+    get flipbookCurrentDoc() {
+      const id = this.flipbookCurrentId;
+      return id ? this.docs[id] : null;
+    },
+
     // 团队贡献入口
     showContribute:  false,
     contributeTab:   'create',           // create | upload | skill
@@ -1155,6 +1327,16 @@ function app() {
       // 监听模块变化，渲染仪表盘
       this.$watch('currentModuleId', (id) => {
         if (id === 'datahub') this.$nextTick(() => this.renderChart());
+      });
+      // 全局键盘：flipbook 翻页 / ESC 退出
+      window.addEventListener('keydown', (e) => {
+        if (this.showFlipbook) {
+          if (e.key === 'ArrowRight') { e.preventDefault(); this.flipNext(); }
+          else if (e.key === 'ArrowLeft')  { e.preventDefault(); this.flipPrev(); }
+          else if (e.key === 'Escape')      { e.preventDefault(); this.closeFlipbook(); }
+        } else if (this.showGraph && e.key === 'Escape') {
+          this.closeGraph();
+        }
       });
     },
 
@@ -1288,6 +1470,72 @@ function app() {
       this.showDraftSkill = false;
       this.draftResult = '';
       this.draftForm = { scenario: '', inputs: '', outputs: '', trigger: '' };
+    },
+
+    // ============ Flipbook 翻书阅读 ============
+    openFlipbook() {
+      if (!this.currentDocId) return;
+      const mid = this.getModuleByDoc(this.currentDocId);
+      // 同模块下所有真实文档，按 moduleDocs 顺序
+      this.flipbookDocs = (this.moduleDocs[mid] || []).map(d => d.id).filter(id => this.docs[id]);
+      // 当前文档作为起始页
+      const i = this.flipbookDocs.indexOf(this.currentDocId);
+      this.flipbookIndex = i >= 0 ? i : 0;
+      this.flipping = null;
+      this.showFlipbook = true;
+    },
+
+    closeFlipbook() {
+      this.showFlipbook = false;
+      this.flipping = null;
+    },
+
+    flipNext() {
+      if (this.flipping) return;
+      if (this.flipbookIndex >= this.flipbookDocs.length - 1) return;
+      this.flipping = 'next';
+      setTimeout(() => {
+        this.flipbookIndex++;
+        // 同步主视图（关闭后看到的也是新文档）
+        this.currentDocId = this.flipbookCurrentId;
+        this.updateHash();
+        setTimeout(() => { this.flipping = null; }, 50);
+      }, 320);
+    },
+
+    flipPrev() {
+      if (this.flipping) return;
+      if (this.flipbookIndex <= 0) return;
+      this.flipping = 'prev';
+      setTimeout(() => {
+        this.flipbookIndex--;
+        this.currentDocId = this.flipbookCurrentId;
+        this.updateHash();
+        setTimeout(() => { this.flipping = null; }, 50);
+      }, 320);
+    },
+
+    flipToIndex(i) {
+      if (this.flipping || i === this.flipbookIndex) return;
+      this.flipping = i > this.flipbookIndex ? 'next' : 'prev';
+      setTimeout(() => {
+        this.flipbookIndex = i;
+        this.currentDocId = this.flipbookCurrentId;
+        this.updateHash();
+        setTimeout(() => { this.flipping = null; }, 50);
+      }, 320);
+    },
+
+    flipToDoc(docId) {
+      // 翻书内点击"延伸阅读"——可能跨模块，跨模块时重建 docs 列表
+      if (!this.docs[docId]) return;
+      const mid = this.getModuleByDoc(docId);
+      const newDocs = (this.moduleDocs[mid] || []).map(d => d.id).filter(id => this.docs[id]);
+      if (mid !== this.getModuleByDoc(this.flipbookCurrentId)) {
+        this.flipbookDocs = newDocs;
+      }
+      const idx = this.flipbookDocs.indexOf(docId);
+      if (idx >= 0) this.flipToIndex(idx);
     },
 
     // ============ 知识图谱 ============
