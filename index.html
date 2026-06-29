@@ -121,6 +121,337 @@
 
 <body x-cloak x-data="app()" x-init="init()" class="overflow-hidden">
 
+<!-- ============================================================ -->
+<!-- ========== 作者层 / FDE 能力画像（包裹层 · 先果后根） ========== -->
+<!-- ============================================================ -->
+<div x-show="showShell" x-cloak class="fixed inset-0 z-40 bg-zinc-50 overflow-y-auto">
+
+  <!-- 顶栏 -->
+  <div class="sticky top-0 z-10 bg-white/85 backdrop-blur border-b border-zinc-200">
+    <div class="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <div class="w-7 h-7 rounded-md bg-zinc-900 flex items-center justify-center text-white font-semibold text-sm">T</div>
+        <span class="font-semibold text-zinc-900 tracking-tight">Ted · 财务 × AI</span>
+        <span class="text-[10px] text-zinc-500 px-1.5 py-0.5 bg-zinc-100 rounded font-medium tracking-wide">FDE 能力画像</span>
+      </div>
+      <button @click="showShell = false; showToast('进入 Acme 实时 demo —— Acme 是虚构占位，你的公司就是下一个 Acme。左下角随时切回能力画像。')"
+              class="pulse-dark text-sm font-medium bg-zinc-900 text-white px-4 py-2 rounded-lg hover:bg-zinc-800 transition flex items-center gap-1.5">
+        ▶ 进入实时系统<span class="text-zinc-400">（根 demo）</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="max-w-5xl mx-auto px-6 pb-28">
+
+    <!-- ░░░░░░░░ #5 先果·门面 hero ░░░░░░░░ -->
+    <section id="shell-hero" class="pt-20">
+      <div class="text-[12px] text-zinc-400 mb-5 tracking-wide">13 年财务 · KPMG → PE → 哈啰出行 BP → 阿里淘天 FP&A</div>
+      <h1 class="text-[2.6rem] md:text-[3.15rem] font-bold leading-[1.1] tracking-[-0.03em] text-zinc-900 max-w-4xl">
+        给我一个模糊的财务痛点，<br>我把它变成一套<span class="text-zinc-400">能跑、能审计</span>的 AI 工作流。
+      </h1>
+      <p class="mt-6 text-[16px] leading-8 text-zinc-600 max-w-2xl">
+        而且我交付的不是一次性方案，是一个会自我增厚的上下文底座 —— 因为我相信，<strong class="text-zinc-900">上下文，是未来团队最大的财富。</strong>
+      </p>
+      <div class="mt-7 flex flex-wrap gap-2.5">
+        <template x-for="c in ['2 个旗舰项目 · 59 测试全绿', '166 笔关联方差异 · 1.0 可审计归因', '规则内核 + LLM 外圈']" :key="c">
+          <span class="text-[12px] font-medium px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-zinc-700" x-text="c"></span>
+        </template>
+      </div>
+      <div class="mt-8 flex flex-wrap items-center gap-3">
+        <span class="inline-block text-[13px] font-medium px-3.5 py-1.5 rounded-full bg-zinc-900 text-white">Forward Deployed Finance Expert · 前置部署财务专家</span>
+        <span class="text-[13px] text-zinc-400">↓ 方法论 · 旗舰案例 · 闭环 · 能力画像</span>
+      </div>
+      <div class="mt-12 border-t border-zinc-200"></div>
+    </section>
+
+    <!-- ░░░░░░░░ #2 主干·方法论 ░░░░░░░░ -->
+    <section id="shell-method" class="pt-16">
+      <div class="text-[11px] text-zinc-400 mb-3 uppercase tracking-[0.2em] font-medium">主干 · 方法论</div>
+      <h1 class="display-title mb-4">把模糊痛点，变成能跑、<span class="text-zinc-400">能审计</span>的 AI 工作流</h1>
+      <p class="text-[15px] leading-8 text-zinc-600 max-w-3xl">
+        我做财务 AI，不是"把活整个塞给大模型"。第一步永远是判断：<strong class="text-zinc-900">哪一部分必须确定、可复现、可被审计师质询，哪一部分才该交给模型</strong>。
+        确定的进<strong class="text-zinc-900">规则内核</strong>，模糊的留给 <strong class="text-zinc-900">LLM 外圈</strong>。这条边界，决定了一个财务 AI 系统能不能被信任。
+      </p>
+
+      <!-- 流水线：模糊痛点 → 可审计交付 → 回灌 -->
+      <div class="mt-10 flex flex-col md:flex-row md:items-stretch gap-2">
+        <template x-for="(s, i) in [
+          {n:'①', t:'拆解', d:'把痛点拆成可判定步骤'},
+          {n:'②', t:'规则内核', d:'确定 / 可复现 / 留痕', core:true},
+          {n:'③', t:'LLM 外圈', d:'解释 / 归纳 / 兜底模糊', llm:true},
+          {n:'④', t:'可审计交付', d:'差异清单 · 台账 · 报告'},
+          {n:'⑤', t:'回灌上下文', d:'结果写回知识库，越用越厚'}
+        ]" :key="i">
+          <div class="flex items-center gap-2 flex-1">
+            <div class="flex-1 rounded-xl border px-4 py-3.5 h-full"
+                 :class="s.core ? 'border-zinc-900 bg-zinc-900 text-white' : (s.llm ? 'border-zinc-300 bg-white border-dashed' : 'border-zinc-200 bg-white')">
+              <div class="text-[11px] mb-1" :class="s.core ? 'text-zinc-400' : 'text-zinc-400'" x-text="s.n + ' ' + s.t"></div>
+              <div class="text-[13px] leading-snug" :class="s.core ? 'text-zinc-100' : 'text-zinc-600'" x-text="s.d"></div>
+            </div>
+            <span x-show="i < 4" class="text-zinc-300 hidden md:block">→</span>
+          </div>
+        </template>
+      </div>
+      <div class="text-[11px] text-zinc-400 mt-2 flex gap-4">
+        <span>■ 规则内核 = 确定可审计</span>
+        <span>▢ LLM 外圈 = 容错可人审</span>
+      </div>
+
+      <!-- 内核 / 外圈 同心模型 + 原则 -->
+      <div class="mt-12 grid md:grid-cols-2 gap-6">
+        <!-- 同心圈 -->
+        <div class="rounded-2xl border border-zinc-200 bg-white p-6">
+          <div class="text-sm font-semibold text-zinc-900 mb-4">规则内核 + LLM 外圈</div>
+          <div class="rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-5">
+            <div class="text-[11px] text-zinc-500 mb-3">LLM 外圈　自然语言解释 · 新型争议研判 · 生成回灌摘要</div>
+            <div class="rounded-xl bg-zinc-900 text-white p-4">
+              <div class="text-[11px] text-zinc-400 mb-1">规则内核</div>
+              <div class="text-[13px] leading-relaxed text-zinc-100">匹配 · 平衡校验 · 已知模式归因<br><span class="text-zinc-400">100% 可复现、留痕、可被审计师质询</span></div>
+            </div>
+          </div>
+        </div>
+        <!-- 工程原则 -->
+        <div class="rounded-2xl border border-zinc-200 bg-white p-6">
+          <div class="text-sm font-semibold text-zinc-900 mb-4">落地工程原则<span class="text-zinc-400 font-normal">（取自 integrations.js）</span></div>
+          <ul class="space-y-3 text-[13px] text-zinc-600 leading-relaxed">
+            <li class="flex gap-2.5"><span class="text-zinc-900">·</span>敏感数据（PII / 银行账号）进模型前必过 <strong class="text-zinc-900">sanitize 层</strong></li>
+            <li class="flex gap-2.5"><span class="text-zinc-900">·</span>所有 LLM 调用走<strong class="text-zinc-900">统一网关</strong> —— 可切模型 / 加缓存 / 留审计日志</li>
+            <li class="flex gap-2.5"><span class="text-zinc-900">·</span><strong class="text-zinc-900">connector 模式</strong>接外部系统（飞书 ↔ 钉钉 ↔ 企微），不锁死厂商</li>
+            <li class="flex gap-2.5"><span class="text-zinc-900">·</span>规则可单测、模型输出可回退 —— <strong class="text-zinc-900">两个旗舰项目 59 个测试全绿</strong></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 通向证据 -->
+      <div class="mt-8 rounded-xl bg-zinc-100 border border-zinc-200 px-5 py-4 text-[13px] text-zinc-600 leading-relaxed">
+        这条边界不是 PPT 概念，下面有活体证据 ↓ 旗舰案例 <strong class="text-zinc-900">ic-recon（关联方对账）</strong>：
+        规则内核在模拟数据上把 166 个差异的归因做到 recall / precision = 1.0、全程可审计；LLM 只碰"解释"与"回灌"。
+      </div>
+    </section>
+
+    <!-- ░░░░░░░░ #3 旗舰交付 · ic-recon ░░░░░░░░ -->
+    <section id="shell-flagship" class="pt-20">
+      <div class="text-[11px] text-zinc-400 mb-3 uppercase tracking-[0.2em] font-medium">旗舰交付 · 案例</div>
+      <h1 class="display-title mb-4">ic-recon —— 把审计师最头疼的<span class="text-zinc-400">关联方对账</span>，变成可审计的自动工作流</h1>
+      <p class="text-[15px] leading-8 text-zinc-600 max-w-3xl">
+        一个真能跑的交付物，走完整 FDE 故事弧：模糊痛点 → 工作流 → 规则/模型边界 → 可量化结果。下面的数字，是本地真实运行（<code class="text-[13px]">python -m ic_recon recon</code>）的原始输出。
+      </p>
+
+      <!-- 故事弧四步 -->
+      <div class="mt-10 space-y-3">
+        <template x-for="(s, i) in [
+          {n:'①', t:'痛点', d:'集团多主体往来对不平：币种差、时点差、在途、记错科目、争议挂账混成一团。关账与年审被审计师反复追底稿，人工逐笔比对几百上千行，易错又说不清差在哪。'},
+          {n:'②', t:'工作流', d:'两层对账引擎：匹配层把双方单据配对，平衡层校验借贷与币种；再把每一笔差异自动归因到 6 类（fx_diff / amount_error / account_mismatch / missing / in_transit / dispute），输出差异清单 + 不平对子。'},
+          {n:'③', t:'规则 / 模型边界', d:'匹配、平衡、已知模式归因 = 规则内核（确定、可单测、可被审计师质询）；自然语言解释每笔差异、研判新型争议、生成回灌知识库的摘要 = LLM 外圈。审计要的是可复现，不是模型现编。'},
+          {n:'④', t:'可量化结果', d:'模拟一个含 1075 笔配对、166 个差异的账期，内核对 6 类差异归因 recall / precision = 1.0，并标出 8 对不平。'}
+        ]" :key="i">
+          <div class="flex gap-4 rounded-xl border border-zinc-200 bg-white p-5">
+            <div class="shrink-0 w-9 h-9 rounded-lg bg-zinc-900 text-white flex items-center justify-center text-sm" x-text="s.n"></div>
+            <div>
+              <div class="text-sm font-semibold text-zinc-900 mb-1" x-text="s.t"></div>
+              <div class="text-[13px] leading-relaxed text-zinc-600" x-text="s.d"></div>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- 真实运行输出 -->
+      <div class="mt-8 grid md:grid-cols-2 gap-6">
+        <!-- 终端 -->
+        <div class="rounded-xl bg-zinc-900 overflow-hidden border border-zinc-800">
+          <div class="flex items-center gap-1.5 px-4 py-2.5 border-b border-zinc-800">
+            <span class="w-2.5 h-2.5 rounded-full bg-zinc-600"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-zinc-600"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-zinc-600"></span>
+            <span class="text-[11px] text-zinc-500 ml-2 font-mono">ic_recon · 真实输出</span>
+          </div>
+          <pre class="text-[12px] leading-relaxed text-zinc-100 p-4 overflow-x-auto font-mono"><span class="text-zinc-500">$ python -m ic_recon recon --period 2026-05 --seed 42</span>
+{
+  "period": "2026-05",
+  "matched_docs": 1075,
+  "diff_items": 166,
+  "by_type": {
+    "fx_diff": 74,
+    "amount_error": 25,
+    "account_mismatch": 19,
+    "missing": 19,
+    "in_transit": 17,
+    "dispute": 12
+  },
+  "unbalanced_pairs": 8
+}</pre>
+        </div>
+        <!-- 评估表 -->
+        <div class="rounded-xl border border-zinc-200 bg-white p-5">
+          <div class="text-sm font-semibold text-zinc-900 mb-3">归因评估（规则内核）</div>
+          <table class="w-full text-[12px]">
+            <thead>
+              <tr class="text-zinc-400 border-b border-zinc-200">
+                <th class="text-left font-medium py-1.5">差异类型</th>
+                <th class="text-right font-medium">注入</th>
+                <th class="text-right font-medium">检出</th>
+                <th class="text-right font-medium">recall</th>
+                <th class="text-right font-medium">prec.</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-zinc-700">
+              <template x-for="r in [
+                ['account_mismatch',19,19],['amount_error',25,25],['dispute',12,12],
+                ['fx_diff',74,74],['in_transit',17,17],['missing',19,19]
+              ]" :key="r[0]">
+                <tr class="border-b border-zinc-100">
+                  <td class="py-1.5 text-zinc-600" x-text="r[0]"></td>
+                  <td class="text-right" x-text="r[1]"></td>
+                  <td class="text-right" x-text="r[2]"></td>
+                  <td class="text-right text-zinc-900">1.0</td>
+                  <td class="text-right text-zinc-900">1.0</td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 诚实标注 -->
+      <div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 px-5 py-4 text-[13px] text-amber-900 leading-relaxed">
+        <strong>⚠ 诚实标注：</strong>这个 1.0 是<strong>"模拟数据上的归因上限验证"</strong>（检出我自己注入的差异），它证明的是<strong>内核架构与可审计性成立</strong>，不是"AI 准确率有多神"。真实数据需要正则与阈值校准（M2 与真实票据校准要做的事）。把该确定的部分做到可审计，比吹一个虚高的准确率更重要 —— 这本身就是财务人的判断力。
+      </div>
+
+      <!-- 形态 + 落地 -->
+      <div class="mt-6 grid md:grid-cols-2 gap-4 text-[13px]">
+        <div class="rounded-xl border border-zinc-200 bg-white p-5">
+          <div class="text-zinc-400 text-[11px] uppercase tracking-wider mb-2">交付形态</div>
+          <div class="text-zinc-700 leading-relaxed">规则引擎内核 · CLI · 可接 Web / skill 三形态；规则全程可单测（<strong class="text-zinc-900">本项目 23 个测试全绿</strong>），模型输出可回退。</div>
+        </div>
+        <div class="rounded-xl border border-zinc-900 bg-zinc-900 text-zinc-100 p-5">
+          <div class="text-zinc-400 text-[11px] uppercase tracking-wider mb-2">在你公司怎么落地</div>
+          <div class="leading-relaxed">接上你们的总账 + 银行流水，<strong class="text-white">内核规则直接复用</strong>，外圈接你们的 LLM 网关；首期 <strong class="text-white">2–3 周</strong>出第一版自动对账 + 差异归因。</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ░░░░░░░░ 其他交付物 · 同模式佐证 + 跨域迁移 ░░░░░░░░ -->
+    <section id="shell-more" class="pt-20">
+      <div class="text-[11px] text-zinc-400 mb-3 uppercase tracking-[0.2em] font-medium">同一套方法 · 其他交付物</div>
+      <h1 class="display-title mb-4">不是一次性运气 —— <span class="text-zinc-400">同一套打法，反复成立</span></h1>
+      <p class="text-[15px] leading-8 text-zinc-600 max-w-3xl">「规则内核 + LLM 外圈」不是为 ic-recon 量身定做的偶然。它在另一个财务场景、和一个完全不同的领域里，都成立。</p>
+
+      <div class="mt-10 grid md:grid-cols-2 gap-4">
+        <!-- 第二枝：expense-agent -->
+        <div class="rounded-xl border border-zinc-200 bg-white p-6">
+          <div class="text-[11px] font-medium text-zinc-500 mb-3"><span class="px-2 py-0.5 rounded bg-zinc-100">第二枝 · 财务运营</span> 同模式佐证</div>
+          <div class="text-base font-semibold text-zinc-900 mb-2">expense-agent —— 发票报销自动校验</div>
+          <div class="text-[13px] text-zinc-600 leading-relaxed">pdfplumber 抽取 + 规则引擎校验（查重 / 抬头 / 超标 / 路由），员工 / 财务双端 Web。同样是<strong class="text-zinc-900">规则内核做确定校验、LLM 只碰模糊判断</strong>。</div>
+          <div class="text-[12px] text-zinc-500 mt-3 pt-2.5 border-t border-zinc-100"><span class="text-zinc-400">证据 →</span> 36 测试全绿 · 端到端跑通</div>
+        </div>
+        <!-- 第三枝：产业链兑现轮动 -->
+        <div class="rounded-xl border border-zinc-200 bg-white p-6">
+          <div class="text-[11px] font-medium text-zinc-500 mb-3"><span class="px-2 py-0.5 rounded bg-zinc-100">第三枝 · 投研</span> 跨域迁移</div>
+          <div class="text-base font-semibold text-zinc-900 mb-2">产业链兑现轮动 —— 把方法迁出财务</div>
+          <div class="text-[13px] text-zinc-600 leading-relaxed">从旗舰产品 BOM 穿透多层供应链 → 对应 A 股标的 → 用真实财务 + 券商一致预期做"兑现-估值象限"。<strong class="text-zinc-900">同一套"痛点→拆解→可审计交付"，迁到投研照样跑</strong>。</div>
+          <div class="text-[12px] text-zinc-500 mt-3 pt-2.5 border-t border-zinc-100"><span class="text-zinc-400">证据 →</span> tsdata 真实财务 · 多条产业链已跑通</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ░░░░░░░░ #4 闭环 · 越用越厚 ░░░░░░░░ -->
+    <section id="shell-loop" class="pt-20">
+      <div class="text-[11px] text-zinc-400 mb-3 uppercase tracking-[0.2em] font-medium">闭环 · 越用越厚</div>
+      <h1 class="display-title mb-4">我交付的不是一次性方案，<br>是会<span class="text-zinc-400">自我增厚</span>的上下文</h1>
+      <p class="text-[15px] leading-8 text-zinc-600 max-w-3xl">
+        每个交付物跑出的结果，自动回灌知识库；上下文越厚，下一个方案长得越快。这就是"上下文是团队最大的财富"的兑现方式 —— 也是为什么我先做这个 wiki，而不是先做一堆孤立的工具。
+      </p>
+
+      <!-- 闭环可视化 -->
+      <div class="mt-10 rounded-2xl border border-zinc-200 bg-white p-6">
+        <div class="flex flex-col md:flex-row md:items-stretch gap-2">
+          <template x-for="(s, i) in [
+            {n:'①', t:'上下文 / wiki', d:'流程 · 知识 · 模板 · 项目档案', root:true},
+            {n:'②', t:'长出工作流', d:'ic-recon · expense-agent · 月报生成器'},
+            {n:'③', t:'跑出结果', d:'差异台账 · 报销校验 · 经营月报'},
+            {n:'④', t:'回灌', d:'结果写回知识沉淀 / 项目档案'}
+          ]" :key="i">
+            <div class="flex items-center gap-2 flex-1">
+              <div class="flex-1 rounded-xl border px-4 py-3.5 h-full"
+                   :class="s.root ? 'border-zinc-900 bg-zinc-900 text-white' : 'border-zinc-200 bg-zinc-50'">
+                <div class="text-[11px] mb-1 text-zinc-400" x-text="s.n + ' ' + s.t"></div>
+                <div class="text-[12px] leading-snug" :class="s.root ? 'text-zinc-200' : 'text-zinc-600'" x-text="s.d"></div>
+              </div>
+              <span x-show="i < 3" class="text-zinc-300 hidden md:block">→</span>
+            </div>
+          </template>
+        </div>
+        <!-- 回灌返回箭头 -->
+        <div class="mt-3 pt-3 border-t border-dashed border-zinc-300 flex items-center gap-2 text-[12px] text-zinc-500">
+          <span class="text-zinc-900">↩</span> 越用越厚 · 回到 ①，上下文更厚，下一个方案长得更快
+        </div>
+      </div>
+
+      <!-- 具体例子 + 护城河 -->
+      <div class="mt-6 grid md:grid-cols-2 gap-4 text-[13px]">
+        <div class="rounded-xl border border-zinc-200 bg-white p-5">
+          <div class="text-zinc-400 text-[11px] uppercase tracking-wider mb-2">一个具体的回灌</div>
+          <div class="text-zinc-600 leading-relaxed">
+            ic-recon 跑出的<strong class="text-zinc-900">「关联方差异台账 + 6 类归因规则」</strong>自动写回 wiki 的「04 项目档案 / 02 知识沉淀」→
+            下次关账，RAG 助手直接引用、新人直接查、规则库复用。<strong class="text-zinc-900">账期越多，台账与规则越厚。</strong>
+          </div>
+        </div>
+        <div class="rounded-xl border border-zinc-900 bg-zinc-900 text-zinc-100 p-5">
+          <div class="text-zinc-400 text-[11px] uppercase tracking-wider mb-2">为什么这是护城河</div>
+          <div class="leading-relaxed">
+            模型会被商品化，<strong class="text-white">这套越用越厚的领域上下文不会</strong>。我能带走的不是某份内容，
+            而是<strong class="text-white">"搭建并让一个领域上下文层滚雪球"的方法能力</strong> —— 这正是 FDE 真正值钱的地方。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ░░░░░░░░ #6 能力画像 ░░░░░░░░ -->
+    <section id="shell-profile" class="pt-20">
+      <div class="text-[11px] text-zinc-400 mb-3 uppercase tracking-[0.2em] font-medium">能力画像 · 这就是我</div>
+      <h1 class="display-title mb-4">一张 FDE 能力地图，<span class="text-zinc-400">每条都有站内证据</span></h1>
+      <p class="text-[15px] leading-8 text-zinc-600 max-w-3xl">不是"会用 ChatGPT 的财务"，而是能把领域判断编码成系统、并让上下文滚雪球的人。</p>
+
+      <div class="mt-10 grid md:grid-cols-2 gap-4">
+        <template x-for="(c, i) in [
+          {t:'翻译', d:'把业务说不清的模糊痛点，翻译成可建的系统', e:'ic-recon / expense-agent 都从真实财务痛点起步'},
+          {t:'建造', d:'不等 IT，自己写出真能跑的东西', e:'59 个测试全绿 · CLI / Web / skill 多形态'},
+          {t:'领域判断', d:'知道什么必须确定可审计、什么才交给模型', e:'规则内核 + LLM 外圈 · 对 1.0 的诚实标注'},
+          {t:'上下文工程', d:'搭一个会自我增厚的领域上下文层', e:'这个 wiki + 回灌闭环'},
+          {t:'跨域迁移', d:'同一套方法，迁到投研 / 产业链等新领域', e:'财务运营 → 产业链兑现轮动 / 供应链卡点研究'}
+        ]" :key="i">
+          <div class="rounded-xl border border-zinc-200 bg-white p-5">
+            <div class="flex items-baseline gap-2 mb-1.5">
+              <span class="text-[11px] text-zinc-300 font-mono" x-text="'0' + (i+1)"></span>
+              <span class="text-base font-semibold text-zinc-900" x-text="c.t"></span>
+            </div>
+            <div class="text-[13px] text-zinc-600 leading-relaxed mb-3" x-text="c.d"></div>
+            <div class="text-[12px] text-zinc-500 pt-2.5 border-t border-zinc-100"><span class="text-zinc-400">证据 →</span> <span x-text="c.e"></span></div>
+          </div>
+        </template>
+        <!-- 收束卡 -->
+        <div class="rounded-xl border border-zinc-900 bg-zinc-900 text-zinc-100 p-5 flex flex-col justify-center">
+          <div class="text-[15px] font-semibold leading-relaxed">一个会用 AI 建造的<br>财务老兵。</div>
+          <div class="text-[13px] text-zinc-400 mt-3 leading-relaxed">把痛点变成能跑、能审计的工作流，<br>让上下文越用越厚。</div>
+        </div>
+      </div>
+
+      <!-- 联系方式 -->
+      <div class="mt-10 pt-6 border-t border-zinc-200 flex flex-wrap items-center justify-between gap-3">
+        <div class="text-[13px] text-zinc-500">Ted · 财务 × AI · 前置部署财务专家</div>
+        <div class="text-[13px] text-zinc-500 font-mono">manutdr7@gmail.com</div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- 切回作者层的浮动按钮（进入系统后可见） -->
+<button x-show="!showShell" x-cloak @click="showShell = true"
+        class="fixed bottom-5 left-5 z-40 text-[13px] font-medium bg-white border border-zinc-300 text-zinc-700 px-3.5 py-2 rounded-full shadow-sm hover:border-zinc-900 hover:text-zinc-900 transition flex items-center gap-1.5">
+  ← Ted 的能力画像
+</button>
+
 <!-- ========== 顶部导航栏 ========== -->
 <header class="h-14 bg-white border-b border-zinc-200 flex items-center px-5 gap-4 z-30 relative">
   <!-- Logo -->
@@ -1218,6 +1549,9 @@ function app() {
       { title: '2026 年 2 月经营月报', date: '2026-03-07', author: 'monthly-report skill' },
       { title: '2026 年 Q1 季度报告', date: '2026-04-15', author: 'CFO' },
     ],
+
+    // 作者层（FDE 能力画像包裹层）：默认先展示作者视角，再"进入实时系统"
+    showShell: true,
 
     // 当前导航
     currentModuleId: 'home',
