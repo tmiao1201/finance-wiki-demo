@@ -4,12 +4,9 @@
 
 ## 怎么打开
 
-**方式一（推荐）**：在 Finder 双击 `index.html`，浏览器自动打开。
+**在线访问（推荐）**：<https://tmiao1201.github.io/finance-wiki-demo/>
 
-**方式二**：终端里：
-```bash
-open /Users/tedmiao/finance-wiki-demo/index.html
-```
+**本地打开**：克隆本仓库后，用浏览器直接打开仓库里的 `index.html` 即可。
 
 零依赖、零构建。所有 CDN 资源浏览器联网即可加载。
 
